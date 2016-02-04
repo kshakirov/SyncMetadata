@@ -1,0 +1,9 @@
+1. create migration -
+ bundle exec rake db:create_migration NAME=create_external_systems
+2. run migration -
+ bundle exec rake db:migrate
+3. triggers
+   CREATE TRIGGER `update_sales_notes` AFTER INSERT ON `sales_note`
+   FOR EACH ROW BEGIN
+      INSERT INTO sales_notes_audit Set action = 'insert', part_id = NEW.id;
+   END;

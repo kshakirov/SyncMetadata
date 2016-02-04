@@ -1,0 +1,8 @@
+development:
+  adapter: mysql2
+  host: 192.168.42.10
+  database: metadata
+  username: vagrant
+  password: vagrant
+  pool: 5
+  timeout: 5000
