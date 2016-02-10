@@ -22,4 +22,10 @@ class TestParts < MiniTest::Unit::TestCase
       end
     end
   end
+
+  def test_manfr_part_type
+    part = Part.find('45487')
+    p part.manfr
+    p part.part_type
+  end
 end

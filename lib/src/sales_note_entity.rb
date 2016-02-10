@@ -12,9 +12,3 @@ class Salesnotepart < ActiveRecord::Base
   self.table_name = "sales_note_part"
 end
 
-class Part < ActiveRecord::Base
-  has_many :salesnotepart, class_name: "Salesnotepart",
-           foreign_key: "part_id"
-  self.table_name = "part"
-
-end
