@@ -7,4 +7,7 @@ class Part < ActiveRecord::Base
              foreign_key: 'part_type_id'
   self.table_name = "part"
 
+  has_many :product_image, class_name: "ProductImage",
+           foreign_key: "part_id"
+
 end

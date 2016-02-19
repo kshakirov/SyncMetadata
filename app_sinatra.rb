@@ -4,9 +4,8 @@ require_relative 'app_helper'
 require_relative 'lib/sync'
 set :bind, '0.0.0.0'
 get '/sync/test' do
-  syncer = SalesNotesSyncer.new
-  skus = syncer.sync_by_timestamp
-  skus.to_json
+  test_hello = {:message => 'Hello, world!'}
+  test_hello.to_json
 end
 
 get '/sync/sales_notes/'  do
@@ -25,3 +24,10 @@ get '/sync/sales_notes/:id'  do
     end
 end
 
+
+get '/sync/product_images/'  do
+  syncer = ProductsImagesSyncer.new   "/var/www/magento/magento/media/import/"
+  images = syncer.sync_all
+  images.to_json
+
+end
