@@ -1,7 +1,7 @@
 echo Installing packages
         # For elasticsearch
       sudo apt-get update
-      sudo dpkg -i /vagrant/elasticsearch-0.90.7.deb
+      sudo dpkg -i /vagrant/bits/ElasticSearch/elasticsearch-2.1.1.deb
 
       # This will install later versions. War and POM need to be updated accordingly, add elasticsearch to apt-get install below
       #wget -qO - http://packages.elasticsearch.org/GPG-KEY-elasticsearch | sudo apt-key add -
@@ -70,12 +70,12 @@ echo Installing packages
       #sudo service tomcat7 start
 
       sleep 10 # Elasticsearch can take a bit to start
-      bash /vagrant/create_index.sh
+      bash /vagrant/bits/ElasticSearch/create_index.sh
 
       mysql -u root -e "CREATE DATABASE IF NOT EXISTS metadata;"
       mysql -u root -e "GRANT ALL PRIVILEGES ON metadata.* TO metaserver@'%' IDENTIFIED BY 'metaserver'; FLUSH PRIVILEGES;"
       mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO root@'192.168.42.1'; FLUSH PRIVILEGES;"
 
       bzcat /vagrant/metadata-201601211417.sql.bz2 | mysql -u metaserver -pmetaserver metadata
-      cd  /vagrant/ && mvn clean package -DskipTests -DbuildNumber=stage
-      nohup java -jar /vagrant/target/metadata-stage.jar &
+      cd  /vagrant/metadata && mvn clean package -DskipTests -DbuildNumber=stage
+      nohup java -jar /vagrant/metadata/target/metadata-stage.jar &

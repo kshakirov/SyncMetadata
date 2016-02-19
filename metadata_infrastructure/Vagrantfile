@@ -4,17 +4,19 @@ settings = YAML.load_file('env.configuration.yml')
 VAGRANTFILE_API_VERSION = '2'
 
 Vagrant.configure("2") do |config|
-  config.vm.define "amazon-turbo", autostart: false do |amazon|
+  config.vm.define "amazon-turbo", autostart: true do |amazon|
 
     amazon.vm.box = settings["aws"]["box"]
     amazon.vm.box_url = settings["aws"]["box_url"]
     amazon.vm.hostname = settings["aws"]['development']["hostname"]
-    amazon.vm.synced_folder '.', '/vagrant', type: "rsync",
+    dir_prefix = '/home/kshakirov/git/local/Metadata_Vagrant/TurboInternational'
+    amazon.vm.synced_folder dir_prefix , '/vagrant', type: "rsync",
                             rsync__args: ["--verbose", "--archive", "--delete", "-z"],
-                            rsync__exclude: [".vagrant/"],
+                            rsync__exclude: [".vagrant/",".idea/",".git/"],
                             rsync__auto: true
 
     amazon.vm.provider "aws" do |aws, override|
+      override.nfs.functional = false
       aws.access_key_id = settings['aws']['access_key_id']
       aws.secret_access_key = settings['aws']['secret_access_key']
       aws.ami = settings['aws']['development']['ami']
@@ -22,21 +24,21 @@ Vagrant.configure("2") do |config|
       aws.instance_type = settings['aws']['development']['instance_type']
       #aws.elastic_ip        = settings['aws']['development']['elastic_ip']
       aws.keypair_name = settings['aws']['keypair_name']
-      aws.security_groups = [settings['aws']['development']['security_group']]
+      aws.security_groups = ["development"]
       override.ssh.username = 'ubuntu'
-      override.ssh.private_key_path = 'keys/aws.cer'
-      aws.tags = {
-          Name: settings['aws']['development']['name']
-      }
-      aws.block_device_mapping = [
-          {
-              'DeviceName' => "/dev/sda1",
-              'VirtualName' => "dev-data-volume",
-              'Ebs.VolumeSize' => 100,
-              'Ebs.DeleteOnTermination' => true,
-              'Ebs.VolumeType' => 'gp2'
-          }
-      ]
+      override.ssh.private_key_path = 'turbo-aws.pem'
+      # aws.tags = {
+      #     Name: settings['aws']['development']['name']
+      # }
+      # aws.block_device_mapping = [
+      #     {
+      #         'DeviceName' => "/dev/sda1",
+      #         'VirtualName' => "dev-data-volume",
+      #         'Ebs.VolumeSize' => 100,
+      #         'Ebs.DeleteOnTermination' => true,
+      #         'Ebs.VolumeType' => 'gp2'
+      #     }
+      # ]
     end
     amazon.vm.provision "shell", privileged: false, path: "metadata_install_script.sh"
   end
