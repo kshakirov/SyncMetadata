@@ -1,9 +1,15 @@
-class ProductsImagesSyncer
-  require 'date'
+require 'zlib'
+require 'archive/tar/minitar'
+require 'date'
 
-  def initialize import_dir= "/var/www/magento/magento/media/import/"
-    @fd= File.open("var/images#{DateTime.now.to_time.to_i}.json", 'w')
+class ProductsImagesSyncer
+
+  def initialize import_dir, file_server_dir
+   # @fd= File.open("var/images#{DateTime.now.to_time.to_i}.json", 'w')
     @import_dir = import_dir
+    @file_server_dir = file_server_dir
+    _prepair_folders
+
   end
 
   def search_files image, index
@@ -46,6 +52,53 @@ class ProductsImagesSyncer
     write_csv_from_image_data images_data
     @fd.close
     images_data
+  end
+
+
+  def _prepair_folders
+    if(File.exists? (@file_server_dir + 'images'))
+      FileUtils.rm_rf @file_server_dir + 'images'
+
+    end
+    FileUtils.makedirs @file_server_dir + 'images'
+    FileUtils.makedirs @file_server_dir + 'images/1000'
+    FileUtils.makedirs @file_server_dir + 'images/135'
+    FileUtils.makedirs @file_server_dir + 'images/50'
+  end
+
+
+  def get_updates
+    all = ProductsImagesAudit.all
+    image_folders = ['1000','135',50]
+    done = false
+    previous_dir = __FILE__
+    all.each do |update|
+      image = ProductImage.find(update.image_id)
+      image_folders.each do |folder|
+        file_name = "#{image.part_id}_#{image.id}.jpg"
+        import_file_path = "#{@import_dir}resized/#{folder}/"
+        if File.exist? (import_file_path + file_name)
+          puts " Exists #{import_file_path}#{file_name}"
+          done = true
+          FileUtils.copy(import_file_path + file_name, @file_server_dir +  'images/' + folder.to_s + '/' + file_name)
+        end
+      end
+    end
+    if done
+      FileUtils.chdir @file_server_dir
+      File.open('images.tar', 'wb') { |tar| Archive::Tar::Minitar.pack('images', tar) }
+      orig = 'images.tar'
+      Zlib::GzipWriter.open('images.tar.gz') do |gz|
+        gz.mtime = File.mtime(orig)
+        gz.orig_name = orig
+        gz.write IO.binread(orig)
+      end
+      FileUtils.remove orig
+      FileUtils.rm_rf "images"
+
+
+    end
+
   end
 
 

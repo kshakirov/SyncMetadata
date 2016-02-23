@@ -61,6 +61,13 @@ class TestProductImage < Minitest::Unit::TestCase
 
   end
 
+
+  def test_audit_reader
+    syncer = ProductsImagesSyncer.new "/var/product_images/", "/tmp/fileserver/"
+    syncer.get_updates
+
+  end
+
   def teardown
 
     @fd.close
