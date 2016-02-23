@@ -3,6 +3,15 @@ require 'json'
 require_relative 'app_helper'
 require_relative 'lib/sync'
 set :bind, '0.0.0.0'
+if not  ENV['RAILS_ENV']
+  exit(1)
+end
+
+set :database_file, "config/" + ENV['RAILS_ENV'] +  "/database.yml"
+
+p ENV['RAILS_ENV']
+p :environment
+
 get '/sync/test' do
   test_hello = {:message => 'Hello, world!'}
   test_hello.to_json

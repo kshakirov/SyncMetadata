@@ -68,6 +68,7 @@ echo Installing packages
       sudo service elasticsearch restart
       sudo service mysql start
       #sudo service tomcat7 start
+      sudo apt-get install libmysqlclient-dev
 
       sleep 10 # Elasticsearch can take a bit to start
       bash /vagrant/bits/ElasticSearch/create_index.sh
