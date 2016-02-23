@@ -34,8 +34,8 @@ get '/sync/sales_notes/:id'  do
 end
 
 
-get '/sync/product_images/'  do
-  syncer = ProductsImagesSyncer.new   "/var/www/magento/magento/media/import/"
+get '/sync/product_images/updates'  do
+  syncer = ProductsImagesSyncer.new
   images = syncer.sync_all
   images.to_json
 
