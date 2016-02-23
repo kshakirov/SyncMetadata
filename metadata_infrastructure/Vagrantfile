@@ -42,5 +42,27 @@ Vagrant.configure("2") do |config|
     end
     amazon.vm.provision "shell", privileged: false, path: "metadata_install_script.sh"
   end
+
+  config.vm.box = "ubuntu/trusty64"
+  config.vm.provider "virtualbox" do |vb|
+    vb.customize ["modifyvm", :id, "--memory", "2048"]
+    # Host-only and NAT
+    vb.customize ["modifyvm", :id, "--nic1", "nat"]
+    vb.customize ["modifyvm", :id, "--nic2", "hostonly"]
+
+  end
+  config.vm.define "vagrant-turbo", autostart: true do |metadata|
+    metadata.vm.hostname = "metadata.ti.dev"
+    dir_prefix = '/home/kshakirov/git/local/Metadata_Vagrant/TurboInternational'
+    metadata.vm.synced_folder dir_prefix , '/vagrant', type: "rsync",
+                            rsync__args: ["--verbose", "--archive", "--delete", "-z"],
+                            rsync__exclude: [".vagrant/",".idea/",".git/"],
+                            rsync__auto: true
+
+    # Create a private network, which allows host-only access to the machine
+    # using a specific IP.
+    config.vm.network "private_network", ip: "192.168.42.11"
+    metadata.vm.provision "shell", privileged: false, path: "metadata_install_script.sh"
+  end
 end
 
