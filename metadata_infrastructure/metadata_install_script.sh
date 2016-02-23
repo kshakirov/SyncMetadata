@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 echo Installing packages
         # For elasticsearch
       sudo apt-get update

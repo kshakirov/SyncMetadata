@@ -3,11 +3,9 @@ require 'json'
 require_relative 'app_helper'
 require_relative 'lib/sync'
 set :bind, '0.0.0.0'
-if not  ENV['RAILS_ENV']
-  exit(1)
-end
+set :images_collection, ENV['METADATA_IMAGES_COLLECTION']
+set :file_server_dir, ENV['METADATA_FILESERVER_DIR']
 
-set :database_file, "config/" + ENV['RAILS_ENV'] +  "/database.yml"
 
 p ENV['RAILS_ENV']
 p :environment
@@ -35,8 +33,9 @@ end
 
 
 get '/sync/product_images/updates'  do
-  syncer = ProductsImagesSyncer.new
-  images = syncer.sync_all
-  images.to_json
+  syncer = ProductsImagesSyncer.new settings.images_collection, settings.file_server_dir
+  syncer.get_updates
+  response = {:result => 'success', :name => 'images.tar.gz' }
+  response.to_json
 
 end
