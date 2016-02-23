@@ -7,5 +7,5 @@ apt-get install libmysqlclient-dev
 sudo apt-get install libgmp3-dev
 sudo apt-get install imagemagick
 gem install bundler
-create user 'vagrant'@'localhost' identified by 'vagrant';
-grant all on metadata.* to 'vagrant'@'localhost';
+mysql -u root  -e "create user 'vagrant'@'localhost' identified by 'vagrant';"
+mysql -u root  -e "grant all on metadata.* to 'vagrant'@'localhost';"
