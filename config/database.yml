@@ -7,4 +7,13 @@ development:
   pool: 5
   timeout: 5000
 
+staging:
+  adapter: mysql2
+  host: localhost
+  database: metadata
+  username: vagrant
+  password: vagrant
+  pool: 5
+  timeout: 5000
+
 
