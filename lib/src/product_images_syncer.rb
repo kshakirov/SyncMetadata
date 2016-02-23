@@ -5,10 +5,11 @@ require 'date'
 class ProductsImagesSyncer
 
   def initialize import_dir, file_server_dir
-   # @fd= File.open("var/images#{DateTime.now.to_time.to_i}.json", 'w')
+
     @import_dir = import_dir
     @file_server_dir = file_server_dir
     _prepair_folders
+    @fd= File.open("#{@file_server_dir}/images/image_updates.json", 'w')
 
   end
 
@@ -67,35 +68,51 @@ class ProductsImagesSyncer
   end
 
 
+  def _create_images_archive
+    FileUtils.chdir @file_server_dir
+    File.open('images.tar', 'wb') { |tar| Archive::Tar::Minitar.pack('images', tar) }
+    orig = 'images.tar'
+    Zlib::GzipWriter.open('images.tar.gz') do |gz|
+      gz.mtime = File.mtime(orig)
+      gz.orig_name = orig
+      gz.write IO.binread(orig)
+    end
+    FileUtils.remove orig
+    FileUtils.rm_rf "images"
+
+  end
+
+
   def get_updates
     all = ProductsImagesAudit.all
     image_folders = ['1000','135',50]
     done = false
     previous_dir = __FILE__
+    images_update_info = []
+    items = []
     all.each do |update|
       image = ProductImage.find(update.image_id)
+      item = {:sku => image.part_id, :images => []}
       image_folders.each do |folder|
+
         file_name = "#{image.part_id}_#{image.id}.jpg"
         import_file_path = "#{@import_dir}resized/#{folder}/"
         if File.exist? (import_file_path + file_name)
-          puts " Exists #{import_file_path}#{file_name}"
+          puts file_name
           done = true
+          image_item = {}
+          image_item[folder] = file_name
+          item[:images].push image_item
           FileUtils.copy(import_file_path + file_name, @file_server_dir +  'images/' + folder.to_s + '/' + file_name)
         end
       end
+      items.push item
+
     end
     if done
-      FileUtils.chdir @file_server_dir
-      File.open('images.tar', 'wb') { |tar| Archive::Tar::Minitar.pack('images', tar) }
-      orig = 'images.tar'
-      Zlib::GzipWriter.open('images.tar.gz') do |gz|
-        gz.mtime = File.mtime(orig)
-        gz.orig_name = orig
-        gz.write IO.binread(orig)
-      end
-      FileUtils.remove orig
-      FileUtils.rm_rf "images"
-
+      @fd.write items.to_s
+      @fd.close
+      _create_images_archive
 
     end
 
