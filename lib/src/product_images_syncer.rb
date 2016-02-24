@@ -110,7 +110,7 @@ class ProductsImagesSyncer
 
     end
     if done
-      @fd.write items.to_s
+      @fd.write items.to_json
       @fd.close
       _create_images_archive
 

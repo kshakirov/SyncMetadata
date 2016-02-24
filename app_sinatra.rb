@@ -3,6 +3,7 @@ require 'json'
 require_relative 'app_helper'
 require_relative 'lib/sync'
 set :bind, '0.0.0.0'
+set :port, 4568
 set :images_collection, ENV['METADATA_IMAGES_COLLECTION']
 set :file_server_dir, ENV['METADATA_FILESERVER_DIR']
 
