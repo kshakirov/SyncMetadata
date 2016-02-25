@@ -110,7 +110,7 @@ class ProductsImagesSyncer
         end
         items.push item
       rescue Exception => e
-        pust "No Record with id "
+        puts "No Record with id "
       end
     end
     if done
