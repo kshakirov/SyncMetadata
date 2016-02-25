@@ -1,6 +1,6 @@
 development:
   adapter: mysql2
-  host: localhost
+  host: 192.168.42.10
   database: metadata
   username: vagrant
   password: vagrant
@@ -9,11 +9,21 @@ development:
 
 staging:
   adapter: mysql2
-  host: 192.168.42.10
+  host: localhost
   database: metadata
   username: vagrant
   password: vagrant
   pool: 5
   timeout: 5000
+
+production:
+  adapter: mysql2
+  host: metaserverdb1.cslctedjmc6k.us-east-1.rds.amazonaws.com
+  database: metadata
+  username: root
+  password: OI1unqzzO{=.s#?
+  pool: 5
+  timeout: 5000
+
 
 
