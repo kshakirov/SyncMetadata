@@ -58,7 +58,7 @@ class ProductsImagesSyncer
 
 
   def _prepair_folders
-    if(File.exists? (@file_server_dir + 'images'))
+    if (File.exists? (@file_server_dir + 'images'))
       FileUtils.rm_rf @file_server_dir + 'images'
 
     end
@@ -86,29 +86,32 @@ class ProductsImagesSyncer
 
   def get_updates
     all = ProductsImagesAudit.all
-    image_folders = ['1000','135',50]
+    image_folders = ['1000', '135', 50]
     done = false
     previous_dir = __FILE__
     images_update_info = []
     items = []
     all.each do |update|
-      image = ProductImage.find(update.image_id)
-      item = {:sku => image.part_id, :images => []}
-      image_folders.each do |folder|
+      begin
+        image = ProductImage.find(update.image_id)
+        item = {:sku => image.part_id, :images => []}
+        image_folders.each do |folder|
 
-        file_name = "#{image.part_id}_#{image.id}.jpg"
-        import_file_path = "#{@import_dir}resized/#{folder}/"
-        if File.exist? (import_file_path + file_name)
-          puts file_name
-          done = true
-          image_item = {}
-          image_item[folder] = file_name
-          item[:images].push image_item
-          FileUtils.copy(import_file_path + file_name, @file_server_dir +  'images/' + folder.to_s + '/' + file_name)
+          file_name = "#{image.part_id}_#{image.id}.jpg"
+          import_file_path = "#{@import_dir}resized/#{folder}/"
+          if File.exist? (import_file_path + file_name)
+            puts file_name
+            done = true
+            image_item = {}
+            image_item[folder] = file_name
+            item[:images].push image_item
+            FileUtils.copy(import_file_path + file_name, @file_server_dir + 'images/' + folder.to_s + '/' + file_name)
+          end
         end
+        items.push item
+      rescue Exception => e
+        pust "No Record with id "
       end
-      items.push item
-
     end
     if done
       fd= File.open("#{@file_server_dir}/images/image_updates.json", 'w')
