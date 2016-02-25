@@ -6,3 +6,24 @@ development:
   password: vagrant
   pool: 5
   timeout: 5000
+
+staging:
+  adapter: mysql2
+  host: localhost
+  database: metadata
+  username: vagrant
+  password: vagrant
+  pool: 5
+  timeout: 5000
+
+production:
+  adapter: mysql2
+  host: metaserverdb1.cslctedjmc6k.us-east-1.rds.amazonaws.com
+  database: metadata
+  username: root
+  password: OI1unqzzO{=.s#?
+  pool: 5
+  timeout: 5000
+
+
+

@@ -1,0 +1,68 @@
+require 'yaml'
+Vagrant.require_version ">= 1.6.2"
+settings = YAML.load_file('env.configuration.yml')
+VAGRANTFILE_API_VERSION = '2'
+
+Vagrant.configure("2") do |config|
+  config.vm.define "amazon-turbo", autostart: true do |amazon|
+
+    amazon.vm.box = settings["aws"]["box"]
+    amazon.vm.box_url = settings["aws"]["box_url"]
+    amazon.vm.hostname = settings["aws"]['development']["hostname"]
+    dir_prefix = '/home/kshakirov/git/local/Metadata_Vagrant/TurboInternational'
+    amazon.vm.synced_folder dir_prefix , '/vagrant', type: "rsync",
+                            rsync__args: ["--verbose", "--archive", "--delete", "-z"],
+                            rsync__exclude: [".vagrant/",".idea/",".git/", "original.tar.gz"],
+                            rsync__auto: true
+
+    amazon.vm.provider "aws" do |aws, override|
+      override.nfs.functional = false
+      aws.access_key_id = settings['aws']['access_key_id']
+      aws.secret_access_key = settings['aws']['secret_access_key']
+      aws.ami = settings['aws']['development']['ami']
+      aws.region = settings['aws']['development']['region']
+      aws.instance_type = settings['aws']['development']['instance_type']
+      aws.elastic_ip        = settings['aws']['development']['elastic_ip']
+      aws.keypair_name = settings['aws']['keypair_name']
+      aws.security_groups = ["development"]
+      override.ssh.username = 'ubuntu'
+      override.ssh.private_key_path = 'turbo-aws.pem'
+      # aws.tags = {
+      #     Name: settings['aws']['development']['name']
+      # }
+      aws.block_device_mapping = [
+          {
+              'DeviceName' => "/dev/sda1",
+              'VirtualName' => "dev-data-volume",
+              'Ebs.VolumeSize' => 100,
+              'Ebs.DeleteOnTermination' => true,
+              'Ebs.VolumeType' => 'gp2'
+          }
+      ]
+    end
+    amazon.vm.provision "shell", privileged: false, path: "metadata_install_script.sh"
+  end
+
+  config.vm.box = "ubuntu/trusty64"
+  config.vm.provider "virtualbox" do |vb|
+    vb.customize ["modifyvm", :id, "--memory", "2048"]
+    # Host-only and NAT
+    vb.customize ["modifyvm", :id, "--nic1", "nat"]
+    vb.customize ["modifyvm", :id, "--nic2", "hostonly"]
+
+  end
+  config.vm.define "vagrant-turbo", autostart: true do |metadata|
+    metadata.vm.hostname = "metadata.ti.dev"
+    dir_prefix = '/home/kshakirov/git/local/Metadata_Vagrant/TurboInternational'
+    metadata.vm.synced_folder dir_prefix , '/vagrant', type: "rsync",
+                            rsync__args: ["--verbose", "--archive", "--delete", "-z"],
+                            rsync__exclude: [".vagrant/",".idea/",".git/"],
+                            rsync__auto: true
+
+    # Create a private network, which allows host-only access to the machine
+    # using a specific IP.
+    config.vm.network "private_network", ip: "192.168.42.11"
+    metadata.vm.provision "shell", privileged: false, path: "metadata_install_script.sh"
+  end
+end
+

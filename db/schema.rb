@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160202130802) do
+ActiveRecord::Schema.define(version: 20160218162826) do
 
   create_table "backplate", id: false, force: :cascade do |t|
     t.integer "part_id",                     limit: 8,                            null: false
@@ -370,6 +370,14 @@ ActiveRecord::Schema.define(version: 20160202130802) do
 
   add_index "product_image", ["filename"], name: "filename", unique: true, using: :btree
   add_index "product_image", ["part_id"], name: "part_id", using: :btree
+
+  create_table "products_images_audits", force: :cascade do |t|
+    t.string   "action",     limit: 255
+    t.integer  "image_id",   limit: 4
+    t.integer  "part_id",    limit: 4
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+  end
 
   create_table "role", force: :cascade do |t|
     t.string "name",    limit: 100, null: false
