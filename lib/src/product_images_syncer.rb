@@ -9,12 +9,13 @@ class ProductsImagesSyncer
     @import_dir = import_dir
     @file_server_dir = file_server_dir
     _prepair_folders
-    @fd= File.open("#{@file_server_dir}/images/image_updates.json", 'w')
+    @fd= File.open("#{@file_server_dir}/all_images.json", 'w')
+
 
   end
 
   def search_files image, index
-    file_path = @import_dir
+    file_path = @import_dir + 'resized/'
     dirs = ['1000/', '135/', '50/']
     image_roles = ['image', 'small_image', 'thumbnail']
     paths = []
@@ -110,8 +111,9 @@ class ProductsImagesSyncer
 
     end
     if done
-      @fd.write items.to_json
-      @fd.close
+      fd= File.open("#{@file_server_dir}/images/image_updates.json", 'w')
+      fd.write items.to_json
+      fd.close
       _create_images_archive
 
     end

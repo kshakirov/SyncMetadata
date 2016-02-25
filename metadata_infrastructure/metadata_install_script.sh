@@ -81,3 +81,7 @@ echo Installing packages
       bzcat /vagrant/metadata-201601211417.sql.bz2 | mysql -u metaserver -pmetaserver metadata
       cd  /vagrant/metadata && mvn clean package -DskipTests -DbuildNumber=stage
       nohup java -jar /vagrant/metadata/target/metadata-stage.jar &
+
+      cd ~
+      git clone https://github.com/kshakirov/SyncMetadata.git
+      cd SyncMetadata && git fetch origin

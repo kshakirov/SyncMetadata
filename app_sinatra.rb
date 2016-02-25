@@ -36,7 +36,14 @@ end
 get '/sync/product_images/updates'  do
   syncer = ProductsImagesSyncer.new settings.images_collection, settings.file_server_dir
   syncer.get_updates
-  response = {:result => 'success', :name => 'images.tar.gz' }
+  response = {:result => true, :path => 'images.tar.gz' }
   response.to_json
 
+end
+
+get '/sync/product_images/all'  do
+  syncer = ProductsImagesSyncer.new settings.images_collection, settings.file_server_dir
+  syncer.sync_all
+  response = {:result => true, :path => 'all_images.json'}
+  response.to_json
 end

@@ -1,6 +1,6 @@
 development:
   adapter: mysql2
-  host: 192.168.42.10
+  host: localhost
   database: metadata
   username: vagrant
   password: vagrant
@@ -9,7 +9,7 @@ development:
 
 staging:
   adapter: mysql2
-  host: localhost
+  host: 192.168.42.10
   database: metadata
   username: vagrant
   password: vagrant
