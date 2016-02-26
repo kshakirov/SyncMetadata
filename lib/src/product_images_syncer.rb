@@ -93,22 +93,30 @@ class ProductsImagesSyncer
     items = []
     all.each do |update|
       begin
-        image = ProductImage.find(update.image_id)
-        item = {:sku => image.part_id, :images => []}
-        image_folders.each do |folder|
+        if update.action=='insert'
+          image = ProductImage.find(update.image_id)
+          item = {:sku => image.part_id, :images => [], :action => update.action}
 
-          file_name = "#{image.part_id}_#{image.id}.jpg"
-          import_file_path = "#{@import_dir}resized/#{folder}/"
-          if File.exist? (import_file_path + file_name)
-            puts file_name
-            done = true
-            image_item = {}
-            image_item[folder] = file_name
-            item[:images].push image_item
-            FileUtils.copy(import_file_path + file_name, @file_server_dir + 'images/' + folder.to_s + '/' + file_name)
+          image_folders.each do |folder|
+            file_name = "#{image.part_id}_#{image.id}.jpg"
+            import_file_path = "#{@import_dir}resized/#{folder}/"
+            if File.exist? (import_file_path + file_name)
+              puts file_name
+              done = true
+              image_item = {}
+              image_item[folder] = file_name
+              item[:images].push image_item
+              FileUtils.copy(import_file_path + file_name, @file_server_dir + 'images/' + folder.to_s + '/' + file_name)
+            end
           end
+          items.push item
+        elsif update.action=='delete'
+          item = {:sku => update.part_id, :action => update.action}
+          item[:image_name]= "#{update.part_id}_#{update.image_id}"
+          items.push item
+          done = true
+
         end
-        items.push item
       rescue Exception => e
         puts "No Record with id "
       end
@@ -120,7 +128,7 @@ class ProductsImagesSyncer
       _create_images_archive
 
     end
-  done
+    done
   end
 
 
