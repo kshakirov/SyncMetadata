@@ -51,7 +51,7 @@ get '/sync/product_images/updates'  do
     response = {:result => true, :path => 'images.tar.gz' }
     system.set_info request.host, 'images'
   else
-    response = {:result => true, :reason => 'empty' }
+    response = {:result => false, :reason => 'empty' }
   end
   response.to_json
 
