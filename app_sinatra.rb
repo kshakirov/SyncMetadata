@@ -12,8 +12,9 @@ p ENV['RAILS_ENV']
 p :environment
 
 get '/sync/test' do
-  test_hello = {:message => request.host}
-  test_hello.to_json
+
+  test = {:message => request.host }
+  test.to_json
 end
 
 get '/sync/sales_notes/'  do
@@ -32,11 +33,26 @@ get '/sync/sales_notes/:id'  do
     end
 end
 
+get '/sync/system/:entity' do
+  system = ExternalSystemsManagment.new
+  system_info= {:host => request.host, :last => system.get_info('localhost',params[:entity])}
+  system_info.to_json
+end
+
+
+
 
 get '/sync/product_images/updates'  do
+  system = ExternalSystemsManagment.new
+  last_id = system.get_info request.host,'images'
   syncer = ProductsImagesSyncer.new settings.images_collection, settings.file_server_dir
-  syncer.get_updates
-  response = {:result => true, :path => 'images.tar.gz' }
+  result = syncer.get_updates last_id
+  if result
+    response = {:result => true, :path => 'images.tar.gz' }
+    system.set_info request.host, 'images'
+  else
+    response = {:result => true, :reason => 'empty' }
+  end
   response.to_json
 
 end

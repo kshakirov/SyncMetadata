@@ -20,8 +20,8 @@ production:
   adapter: mysql2
   host: metaserverdb1.cslctedjmc6k.us-east-1.rds.amazonaws.com
   database: metadata
-  username: root
-  password: OI1unqzzO{=.s#?
+  username: metaserver
+  password: L535X'twf8zk=4x
   pool: 5
   timeout: 5000
 

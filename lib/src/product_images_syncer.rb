@@ -84,8 +84,8 @@ class ProductsImagesSyncer
   end
 
 
-  def get_updates
-    all = ProductsImagesAudit.all
+  def get_updates id
+    all = ProductsImagesAudit.where("id > ?", id)
     image_folders = ['1000', '135', 50]
     done = false
     previous_dir = __FILE__
@@ -120,7 +120,7 @@ class ProductsImagesSyncer
       _create_images_archive
 
     end
-
+  done
   end
 
 
