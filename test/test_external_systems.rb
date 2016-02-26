@@ -7,6 +7,7 @@ class TestExternalSystems < MiniTest::Unit::TestCase
   def test_all
     systems = ExternalSystem.all
     assert_instance_of ExternalSystem::ActiveRecord_Relation, systems
+    assert_equal systems[0].id, 1
 
   end
 end

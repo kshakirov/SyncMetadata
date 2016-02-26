@@ -12,7 +12,7 @@ p ENV['RAILS_ENV']
 p :environment
 
 get '/sync/test' do
-  test_hello = {:message => 'Hello, world!'}
+  test_hello = {:message => request.host}
   test_hello.to_json
 end
 
