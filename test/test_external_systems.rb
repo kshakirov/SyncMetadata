@@ -10,4 +10,12 @@ class TestExternalSystems < MiniTest::Unit::TestCase
     assert_equal systems[0].id, 1
 
   end
+
+  def test_create
+    system = ExternalSystem.new
+    system.url = "metadata.turbointernational.com"
+    system.description = "production"
+    system.save
+
+  end
 end
