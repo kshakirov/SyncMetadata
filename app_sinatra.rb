@@ -25,12 +25,18 @@ get '/sync/sales_notes/'  do
 end
 
 
-get '/sync/sales_notes/:id'  do
-  if params[:id]
+get '/sync/sales_notes/updates'  do
+    system = ExternalSystemsManagment.new
+    last_id = system.get_info request.host,'notes'
     syncer = SalesNotesSyncer.new
-    notes= syncer.sync_by_last_note_id params[:id].to_i
-    notes.to_json
+    notes= syncer.sync_by_last_note_id last_id
+    if notes
+      response = {:result => true, data: notes  }
+      system.set_info request.host, 'notes'
+    else
+      response = {:result => false}
     end
+    response.to_json
 end
 
 get '/sync/system/:entity' do

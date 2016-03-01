@@ -51,7 +51,11 @@ class SalesNotesSyncer
       end
 
     end
-    result
+    if result.size > 0
+      result
+    else
+      false
+    end
   end
 
   def sync_by_last_note_id last_id
