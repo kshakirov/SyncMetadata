@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160301132257) do
+ActiveRecord::Schema.define(version: 20160301135142) do
 
   create_table "backplate", id: false, force: :cascade do |t|
     t.integer "part_id",                     limit: 8,                            null: false
@@ -434,6 +434,7 @@ ActiveRecord::Schema.define(version: 20160301132257) do
     t.integer  "sales_note_id", limit: 4
     t.datetime "created_at",                null: false
     t.datetime "updated_at",                null: false
+    t.string   "old_state",     limit: 255
   end
 
   create_table "seal_type", force: :cascade do |t|
