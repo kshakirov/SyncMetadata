@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160226151430) do
+ActiveRecord::Schema.define(version: 20160301132257) do
 
   create_table "backplate", id: false, force: :cascade do |t|
     t.integer "part_id",                     limit: 8,                            null: false
