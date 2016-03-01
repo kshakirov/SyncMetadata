@@ -2,6 +2,10 @@ require 'sinatra'
 require 'json'
 require_relative 'app_helper'
 require_relative 'lib/sync'
+require 'pry'
+require 'pry-nav'
+
+
 set :bind, '0.0.0.0'
 set :port, 4568
 set :images_collection, ENV['METADATA_IMAGES_COLLECTION']
