@@ -9,8 +9,6 @@ class ProductsImagesSyncer
     @import_dir = import_dir
     @file_server_dir = file_server_dir
     _prepair_folders
-    @fd= File.open("#{@file_server_dir}/all_images.json", 'w')
-
 
   end
 
@@ -37,7 +35,19 @@ class ProductsImagesSyncer
     @fd.write data.to_json
   end
 
+
+  def has_product_older_images id
+    images = ProductImage.where("part_id = ?", id)
+    if images.size > 1
+      true
+    else
+      false
+    end
+
+  end
+
   def sync_all
+    @fd= File.open("#{@file_server_dir}/all_images.json", 'w')
     products = Part.all
     images_data = []
     products.each do |p|
@@ -95,7 +105,7 @@ class ProductsImagesSyncer
       begin
         if update.action=='insert'
           image = ProductImage.find(update.image_id)
-          item = {:sku => image.part_id, :images => [], :action => update.action}
+          item = {:sku => image.part_id, :images => [], :action => update.action, :base_image =>  !has_product_older_images(image.part_id)}
 
           image_folders.each do |folder|
             file_name = "#{image.part_id}_#{image.id}.jpg"

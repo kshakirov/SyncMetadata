@@ -9,3 +9,5 @@ sudo apt-get install libgmp3-dev -y
 sudo apt-get install imagemagick -y
 gem install bundler
 mysql -u root  -e "grant all on metadata.* to vagrant@localhost identified by 'vagrant'"
+source ~/.rvm/scripts/rvm && gem install pry
+source ~/.rvm/scripts/rvm && gem instal pry-nav
