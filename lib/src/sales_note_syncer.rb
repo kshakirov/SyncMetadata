@@ -75,7 +75,7 @@ class SalesNotesSyncer
             current_note['metadata_note_id'] = note.id
             current_note['action'] = 'insert'
             result.push current_note
-          elsif id.old_state== "published" and id.old_state =="published" and id.state == 'published'
+          elsif id.old_state== "published"  and id.state == 'published'
             current_note = {}
             current_note['comment'] = note.comment
             current_note['sku'] = part.part_id.to_s
@@ -84,7 +84,7 @@ class SalesNotesSyncer
             current_note['action'] = 'update'
             result.push current_note
 
-          elsif id.old_state== "published" and id.old_state !="published" and id.state == 'published'
+          elsif id.old_state== "published" and id.state !="published"
             current_note = {}
             current_note['sku'] = part.part_id.to_s
             current_note['metadata_note_id'] = note.id
@@ -96,7 +96,7 @@ class SalesNotesSyncer
       end
 
     end
-    result
+    result if result.size >0
   end
 
 end
