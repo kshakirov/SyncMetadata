@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160304132311) do
+ActiveRecord::Schema.define(version: 20160304161120) do
 
   create_table "backplate", id: false, force: :cascade do |t|
     t.integer "part_id",                     limit: 8,                            null: false
@@ -326,6 +326,13 @@ ActiveRecord::Schema.define(version: 20160304132311) do
   add_index "part", ["manfr_id"], name: "manfr_id", using: :btree
   add_index "part", ["manfr_part_num", "manfr_id"], name: "manfr_part_num", unique: true, using: :btree
   add_index "part", ["part_type_id"], name: "part_type_id", using: :btree
+
+  create_table "part_audits", force: :cascade do |t|
+    t.integer  "part_id",    limit: 4
+    t.string   "action",     limit: 255
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+  end
 
   create_table "part_turbo", force: :cascade do |t|
     t.integer "part_id",  limit: 8, null: false
