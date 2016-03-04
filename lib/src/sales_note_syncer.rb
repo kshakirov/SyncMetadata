@@ -67,28 +67,28 @@ class SalesNotesSyncer
 
       if salesparts.size > 0
         salesparts.each do |part|
-          if note.state == 'published' and  id.old_state !="publilshed"
+          if note.state == 'published' and  id.old_state !="published" and id.state == 'published'
             current_note = {}
             current_note['comment'] = note.comment
             current_note['sku'] = part.part_id.to_s
             current_note['write_date'] = part.write_date.to_s
-            current_note['audit_id'] = id.id
-            current_note['action'] = 'inserted'
+            current_note['metadata_note_id'] = note.id
+            current_note['action'] = 'insert'
             result.push current_note
-          elsif id.old_state== "published" and note.state =="publilshed"
+          elsif id.old_state== "published" and id.old_state =="published" and id.state == 'published'
             current_note = {}
             current_note['comment'] = note.comment
             current_note['sku'] = part.part_id.to_s
             current_note['write_date'] = part.write_date.to_s
-            current_note['audit_id'] = id.id
-            current_note['action'] = 'updated'
+            current_note['metadata_note_id'] = note.id
+            current_note['action'] = 'update'
             result.push current_note
 
-          elsif id.old_state== "published" and note.state !="publilshed"
+          elsif id.old_state== "published" and id.old_state !="published" and id.state == 'published'
             current_note = {}
             current_note['sku'] = part.part_id.to_s
             current_note['metadata_note_id'] = note.id
-            current_note['action'] = 'deleted'
+            current_note['action'] = 'delete'
             result.push current_note
           end
 

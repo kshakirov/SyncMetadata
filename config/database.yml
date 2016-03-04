@@ -1,6 +1,6 @@
 development:
   adapter: mysql2
-  host: 192.168.42.10
+  host: 192.168.42.11
   database: metadata
   username: vagrant
   password: vagrant
