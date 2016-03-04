@@ -9,5 +9,7 @@ class Part < ActiveRecord::Base
 
   has_many :product_image, class_name: "ProductImage",
            foreign_key: "part_id"
+  has_one :bearing_spacer, class_name: "BearingSpacer"
+
 
 end
