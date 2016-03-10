@@ -15,6 +15,14 @@ class ProductSyncInserted
     product
   end
 
+  def get_turbo_type  part
+    type = TurboType.where("manfr_id = ? and import_pk = ?", part.manfr.id, part.import_pk)
+    if type.first
+      return type.first.name
+    end
+    nil
+  end
+
   def run id
     part = Part.find(id)
     inserted_product = {}
@@ -24,6 +32,8 @@ class ProductSyncInserted
     inserted_product[:description] = part.description
     inserted_product[:part_number] = part.manfr_part_num
     get_attribute_set(part.part_type.magento_attribute_set, inserted_product, part)
+    inserted_product[:turbo_type] = get_turbo_type part
+
     inserted_product
   end
 
