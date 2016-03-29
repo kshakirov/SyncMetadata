@@ -33,6 +33,7 @@ GEM
       slop (~> 3.4)
     pry-nav (0.2.4)
       pry (>= 0.9.10, < 0.11.0)
+    puma (3.2.0)
     rack (1.6.4)
     rack-protection (1.5.3)
       rack
@@ -49,6 +50,7 @@ GEM
     tilt (2.0.2)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
+    will_paginate (3.0.7)
 
 PLATFORMS
   ruby
@@ -61,6 +63,11 @@ DEPENDENCIES
   mysql2 (~> 0.4.0)
   pry
   pry-nav
+  puma
   rake
   sinatra
   sinatra-activerecord
+  will_paginate (~> 3.0.6)
+
+BUNDLED WITH
+   1.10.6

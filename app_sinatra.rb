@@ -4,6 +4,8 @@ require_relative 'app_helper'
 require_relative 'lib/sync'
 require 'pry'
 require 'pry-nav'
+require 'will_paginate'
+require 'will_paginate/active_record'
 
 
 set :bind, '0.0.0.0'
@@ -16,7 +18,7 @@ p ENV['RAILS_ENV']
 p :environment
 
 get '/sync/test' do
-
+  content_type :json
   test = {:message => request.host }
   test.to_json
 end
@@ -27,6 +29,14 @@ get '/sync/sales_notes/'  do
   notes.to_json
 
 end
+
+
+get '/sync/vwhere_used/:id' do
+  content_type :json
+  sync = VWhereUsedSyncManager.new
+  sync.get_by_id params[:id]
+end
+
 
 
 get '/sync/sales_notes/updates'  do

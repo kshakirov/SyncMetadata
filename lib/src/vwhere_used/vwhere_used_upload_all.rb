@@ -1,30 +1,28 @@
 class VWhereUsedUploadAll
 
+
+  def initialize
+    @fd = File.open("vwhere_used.yml","w")
+  end
+
   def process_record record
     values = {}
-    record.attributes.each do |k,v|
+    puts record.id
+    record.attributes.each do |k, v|
       #puts "#{k} => #{v}"
       values[k.to_sym] = v
     end
-    values
+    @fd.write values.to_yaml
   end
 
-
-  def test_run
-    vws = []
-    VWhereUsed.limit(10).each do |wv|
-     vws.push(process_record wv)
-    end
-
-  vws
-  end
 
   def run
-    vws = []
-    VWhereUsed.all.each do |wv|
-      vws.push(process_record wv)
+    VWhereUsed.find_in_batches.with_index do |th,batch|
+      puts "Batch => #{batch}"
+      th.each do |wv|
+        process_record wv
+      end
     end
-
-    vws
+    @fd.close
   end
 end
