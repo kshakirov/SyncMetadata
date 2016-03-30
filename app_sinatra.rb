@@ -34,7 +34,7 @@ end
 get '/sync/vwhere_used/:id' do
   content_type :json
   sync = VWhereUsedSyncManager.new
-  sync.get_by_id params[:id]
+  sync.get_by_id params[:id], params[:page]
 end
 
 

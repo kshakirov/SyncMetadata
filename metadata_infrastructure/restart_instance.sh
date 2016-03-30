@@ -11,3 +11,7 @@ cd /vagrant && ln -s ~/var/product_images/ images
 
 screen -S fileserver
 screen -S sinatra
+
+
+#start sinatra
+ruby app_sinatra.rb -s puma
