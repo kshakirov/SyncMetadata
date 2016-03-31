@@ -31,6 +31,13 @@ get '/sync/sales_notes/'  do
 end
 
 
+get '/sync/vwhere_used/:id/group' do
+  content_type :json
+  sync = VWhereUsedSyncManager.new
+  sync.find_by_group params[:id], params[:page]
+end
+
+
 get '/sync/vwhere_used/:id' do
   content_type :json
   sync = VWhereUsedSyncManager.new

@@ -12,4 +12,8 @@ class VWhereUsedSyncManager
     finder = VWhereUsedFinder.new
     finder.find_by_id id, page
   end
+  def find_by_group id, page=1
+    finder = VWhereUsedFinder.new
+    finder.find_by_group id, page.to_i
+  end
 end
