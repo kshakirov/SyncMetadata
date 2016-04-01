@@ -12,6 +12,7 @@ class VWhereUsedFinder
   def find_by_group id, page
     useds = VWhereUsed.where("principal_id = ?", id).group(:sku)
     result = useds.count
+    items = result.values.sum
     size = result.size
     total_pages = (size.to_f/@per_page).ceil
     keys = result.keys
