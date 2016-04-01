@@ -19,7 +19,4 @@ require_relative 'src/vwhere_used/where_used_finder'
 require_relative 'src/vintercnanges/vint_finder'
 require_relative 'src/vintercnanges/vint_sync_manager'
 require_relative 'src/vinterchanges_view'
-# require_relative 'src/vinterchanges/vint_finder'
-# require_relative 'src/vinterchanges/vint_sync_manager'
-# require_relative 'src/vinterchanges_view'
-
+require_relative 'src/interchange_item'
