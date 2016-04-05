@@ -27,4 +27,22 @@ class TestVintSync <Minitest::Unit::TestCase
     response.to_json
   end
 
+  def test_all_together
+    id = 45077
+    header = InterchangeItem.find id
+    interchanges = InterchangeItem.where("interchange_header_id=?", header.interchange_header_id)
+    response = {:records => []}
+
+    ids = []
+    interchanges.each do |i|
+      unless i.part_id == id
+        ids.push i.part_id
+      end
+    end
+
+    results = Part.where(:id => ids)
+    p results
+
+  end
+
 end
