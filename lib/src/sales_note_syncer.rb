@@ -62,39 +62,42 @@ class SalesNotesSyncer
     notes_ids = SalesNotesAudit.where("id > ?", last_id)
     result = []
     notes_ids.each do |id|
-      note = Salesnote.find id.sales_note_id
-      salesparts = Salesnotepart.where(sales_note_id: note.id)
+      begin
+        note = Salesnote.find id.sales_note_id
+        salesparts = Salesnotepart.where(sales_note_id: note.id)
 
-      if salesparts.size > 0
-        salesparts.each do |part|
-          if note.state == 'published' and  id.old_state !="published" and id.state == 'published'
-            current_note = {}
-            current_note['comment'] = note.comment
-            current_note['sku'] = part.part_id.to_s
-            current_note['write_date'] = part.write_date.to_s
-            current_note['metadata_note_id'] = note.id
-            current_note['action'] = 'insert'
-            result.push current_note
-          elsif id.old_state== "published"  and id.state == 'published'
-            current_note = {}
-            current_note['comment'] = note.comment
-            current_note['sku'] = part.part_id.to_s
-            current_note['write_date'] = part.write_date.to_s
-            current_note['metadata_note_id'] = note.id
-            current_note['action'] = 'update'
-            result.push current_note
+        if salesparts.size > 0
+          salesparts.each do |part|
+            if note.state == 'published' and id.old_state !="published" and id.state == 'published'
+              current_note = {}
+              current_note['comment'] = note.comment
+              current_note['sku'] = part.part_id.to_s
+              current_note['write_date'] = part.write_date.to_s
+              current_note['metadata_note_id'] = note.id
+              current_note['action'] = 'insert'
+              result.push current_note
+            elsif id.old_state== "published" and id.state == 'published'
+              current_note = {}
+              current_note['comment'] = note.comment
+              current_note['sku'] = part.part_id.to_s
+              current_note['write_date'] = part.write_date.to_s
+              current_note['metadata_note_id'] = note.id
+              current_note['action'] = 'update'
+              result.push current_note
 
-          elsif id.old_state== "published" and id.state !="published"
-            current_note = {}
-            current_note['sku'] = part.part_id.to_s
-            current_note['metadata_note_id'] = note.id
-            current_note['action'] = 'delete'
-            result.push current_note
+            elsif id.old_state== "published" and id.state !="published"
+              current_note = {}
+              current_note['sku'] = part.part_id.to_s
+              current_note['metadata_note_id'] = note.id
+              current_note['action'] = 'delete'
+              result.push current_note
+            end
+
           end
-
         end
+      rescue ActiveRecord::RecordNotFound
+        p "Not found"
       end
-
     end
     result if result.size >0
   end
