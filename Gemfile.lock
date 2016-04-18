@@ -55,6 +55,7 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord
+  activesupport (~> 4.2, >= 4.2.5)
   archive-tar-minitar (~> 0.5.2)
   composite_primary_keys (> 8.0.0)
   ferver
@@ -64,3 +65,6 @@ DEPENDENCIES
   rake
   sinatra
   sinatra-activerecord
+
+BUNDLED WITH
+   1.10.6
