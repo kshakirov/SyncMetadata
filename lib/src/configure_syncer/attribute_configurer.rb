@@ -1,9 +1,9 @@
 class AttributeConfigurer
 
   def get_magento_type inner_type
-    if (inner_type=='DECIMAL')
+    if inner_type=='DECIMAL'
       inner_type.downcase
-    elsif (inner_type='ENUMERATION')
+    elsif inner_type == 'ENUMERATION'
       'int'
     else
       'null'
@@ -13,7 +13,7 @@ class AttributeConfigurer
   def add_prefix_to_attribute_name part_type_name
     ps = part_type_name.split(' ')
     name = ''
-    ps.each{ |p|
+    ps.each { |p|
       name += p[0]
     }
     name

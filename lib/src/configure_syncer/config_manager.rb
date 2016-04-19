@@ -6,9 +6,8 @@ class ConfigManager
     @attribute_configurer.run
   end
 
-  def run params
-    if params[:attribute_metadata]
+  def get_critical_dimension_attributes
       get_attributes_table
-    end
   end
+
 end

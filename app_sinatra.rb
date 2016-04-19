@@ -28,6 +28,11 @@ get '/sync/sales_notes/'  do
 
 end
 
+get '/config/attributes/' do
+  configurer = ConfigManager.new
+  configurer.get_critical_dimension_attributes
+end
+
 
 get '/sync/sales_notes/updates'  do
     system = ExternalSystemsManagment.new
