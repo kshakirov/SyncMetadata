@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160304161120) do
+ActiveRecord::Schema.define(version: 20160419142546) do
 
   create_table "auth_provider", force: :cascade do |t|
     t.string "typ", limit: 4, null: false
@@ -226,19 +226,21 @@ ActiveRecord::Schema.define(version: 20160304161120) do
   add_index "cool_type", ["name"], name: "name", unique: true, using: :btree
 
   create_table "crit_dim", force: :cascade do |t|
-    t.integer "part_type_id", limit: 8,   null: false
-    t.integer "seq_num",      limit: 4,   null: false
-    t.string  "data_type",    limit: 11,  null: false
-    t.string  "json_enum",    limit: 32
-    t.string  "unit",         limit: 7
+    t.integer "part_type_id",          limit: 8,               null: false
+    t.integer "seq_num",               limit: 4,               null: false
+    t.string  "data_type",             limit: 11,              null: false
+    t.string  "json_enum",             limit: 32
+    t.string  "unit",                  limit: 7
     t.boolean "tolerance"
-    t.string  "name",         limit: 255, null: false
-    t.string  "json_name",    limit: 32,  null: false
-    t.boolean "null_allowed",             null: false
-    t.string  "null_display", limit: 32
-    t.integer "parent_id",    limit: 8
-    t.integer "length",       limit: 1
-    t.integer "scale",        limit: 1
+    t.string  "name",                  limit: 255,             null: false
+    t.string  "json_name",             limit: 32,              null: false
+    t.boolean "null_allowed",                                  null: false
+    t.string  "null_display",          limit: 32
+    t.integer "parent_id",             limit: 8
+    t.integer "length",                limit: 1
+    t.integer "scale",                 limit: 1
+    t.integer "is_visible_in_list",    limit: 4,   default: 0
+    t.integer "is_critical_dimension", limit: 4,   default: 1
   end
 
   add_index "crit_dim", ["parent_id"], name: "parent_id", using: :btree
