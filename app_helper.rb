@@ -6,4 +6,5 @@ require 'composite_primary_keys'
 require 'json'
 require 'zlib'
 require 'archive/tar/minitar'
+require 'active_support/all'
 

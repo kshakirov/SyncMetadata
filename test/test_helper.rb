@@ -5,6 +5,7 @@ require 'yaml'
 require 'composite_primary_keys'
 require 'minitest'
 require 'minitest/autorun'
+require 'active_support/all'
 require_relative __dir__ + "/../lib/sync"
 
 configuration = YAML::load(IO.read(__dir__ + '/../config/database.yml'))

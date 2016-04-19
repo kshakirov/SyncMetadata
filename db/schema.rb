@@ -13,6 +13,20 @@
 
 ActiveRecord::Schema.define(version: 20160304161120) do
 
+  create_table "auth_provider", force: :cascade do |t|
+    t.string "typ", limit: 4, null: false
+  end
+
+  create_table "auth_provider_ldap", force: :cascade do |t|
+    t.string  "name",     limit: 64,                null: false
+    t.string  "host",     limit: 255,               null: false
+    t.integer "port",     limit: 4,   default: 636, null: false
+    t.string  "protocol", limit: 10,                null: false
+    t.string  "domain",   limit: 255
+  end
+
+  add_index "auth_provider_ldap", ["name"], name: "name", unique: true, using: :btree
+
   create_table "backplate", id: false, force: :cascade do |t|
     t.integer "part_id",                     limit: 8,                            null: false
     t.integer "seal_type_id",                limit: 8
@@ -30,7 +44,7 @@ ActiveRecord::Schema.define(version: 20160304161120) do
   add_index "backplate", ["part_id"], name: "part_id", using: :btree
 
   create_table "bearing_housing", id: false, force: :cascade do |t|
-    t.integer "part_id",             limit: 8,   null: false
+    t.integer "part_id",             limit: 8,                           null: false
     t.integer "cool_type_id",        limit: 8
     t.string  "oil_inlet",           limit: 100
     t.string  "oil_outlet",          limit: 100
@@ -39,6 +53,33 @@ ActiveRecord::Schema.define(version: 20160304161120) do
     t.string  "water_ports",         limit: 100
     t.string  "design_features",     limit: 100
     t.string  "bearing_type",        limit: 100
+    t.string  "water_cooled",        limit: 5
+    t.decimal "ce_dia_a",                        precision: 6, scale: 3
+    t.decimal "ce_dia_a_tol",                    precision: 6, scale: 3
+    t.decimal "ce_dia_b",                        precision: 6, scale: 3
+    t.decimal "ce_dia_b_tol",                    precision: 6, scale: 3
+    t.decimal "ce_dia_c",                        precision: 6, scale: 3
+    t.decimal "ce_dia_c_tol",                    precision: 6, scale: 3
+    t.decimal "cwc_dia",                         precision: 6, scale: 3
+    t.decimal "cwc_dia_tol",                     precision: 6, scale: 3
+    t.decimal "bore_dia_max",                    precision: 6, scale: 3
+    t.decimal "bore_dia_min",                    precision: 6, scale: 3
+    t.decimal "pr_bore_dia",                     precision: 6, scale: 3
+    t.decimal "pr_bore_dia_tol",                 precision: 6, scale: 3
+    t.boolean "spinning_bearing"
+    t.decimal "te_dia_d",                        precision: 6, scale: 3
+    t.decimal "te_dia_d_tol",                    precision: 6, scale: 3
+    t.decimal "te_dia_e",                        precision: 6, scale: 3
+    t.decimal "te_dia_e_tol",                    precision: 6, scale: 3
+    t.decimal "te_dia_f",                        precision: 6, scale: 3
+    t.decimal "te_dia_f_tol",                    precision: 6, scale: 3
+    t.decimal "arm_angle",                       precision: 6, scale: 1
+    t.decimal "oal",                             precision: 6, scale: 3
+    t.decimal "oal_tol",                         precision: 6, scale: 3
+    t.decimal "weight",                          precision: 6, scale: 1
+    t.integer "diagram_num",         limit: 4
+    t.decimal "led_in_chmfr_angle",              precision: 6, scale: 1
+    t.decimal "led_in_chmfr_len",                precision: 6, scale: 3
   end
 
   add_index "bearing_housing", ["part_id"], name: "part_id", using: :btree
@@ -76,6 +117,17 @@ ActiveRecord::Schema.define(version: 20160304161120) do
   add_index "bom_alt_item", ["bom_alt_header_id", "bom_id"], name: "bom_alt_header_id", unique: true, using: :btree
   add_index "bom_alt_item", ["bom_id"], name: "bom_id", using: :btree
   add_index "bom_alt_item", ["part_id"], name: "part_id", using: :btree
+
+  create_table "bom_ancestor", force: :cascade do |t|
+    t.integer "part_id",          limit: 8,  null: false
+    t.integer "ancestor_part_id", limit: 8,  null: false
+    t.integer "distance",         limit: 4,  null: false
+    t.string  "type",             limit: 20, null: false
+  end
+
+  add_index "bom_ancestor", ["distance"], name: "distance", using: :btree
+  add_index "bom_ancestor", ["part_id", "ancestor_part_id"], name: "part_id", unique: true, using: :btree
+  add_index "bom_ancestor", ["part_id", "type", "distance", "ancestor_part_id"], name: "part_id_2", using: :btree
 
   create_table "bom_descendant", force: :cascade do |t|
     t.integer "part_bom_id",       limit: 8,  null: false
@@ -172,6 +224,25 @@ ActiveRecord::Schema.define(version: 20160304161120) do
   end
 
   add_index "cool_type", ["name"], name: "name", unique: true, using: :btree
+
+  create_table "crit_dim", force: :cascade do |t|
+    t.integer "part_type_id", limit: 8,   null: false
+    t.integer "seq_num",      limit: 4,   null: false
+    t.string  "data_type",    limit: 11,  null: false
+    t.string  "json_enum",    limit: 32
+    t.string  "unit",         limit: 7
+    t.boolean "tolerance"
+    t.string  "name",         limit: 255, null: false
+    t.string  "json_name",    limit: 32,  null: false
+    t.boolean "null_allowed",             null: false
+    t.string  "null_display", limit: 32
+    t.integer "parent_id",    limit: 8
+    t.integer "length",       limit: 1
+    t.integer "scale",        limit: 1
+  end
+
+  add_index "crit_dim", ["parent_id"], name: "parent_id", using: :btree
+  add_index "crit_dim", ["part_type_id", "seq_num"], name: "part_type_id", unique: true, using: :btree
 
   create_table "deleted_parts", id: false, force: :cascade do |t|
     t.integer  "id", limit: 8, null: false
@@ -305,6 +376,19 @@ ActiveRecord::Schema.define(version: 20160304161120) do
     t.decimal "StdPrice",              precision: 10, scale: 2, default: 0.0, null: false
   end
 
+  create_table "mas90sync", force: :cascade do |t|
+    t.datetime "started",                           null: false
+    t.datetime "finished"
+    t.integer  "to_process", limit: 8,  default: 0
+    t.integer  "updated",    limit: 8,  default: 0
+    t.integer  "inserted",   limit: 8,  default: 0
+    t.integer  "skipped",    limit: 8,  default: 0
+    t.integer  "user_id",    limit: 8
+    t.string   "status",     limit: 11,             null: false
+  end
+
+  add_index "mas90sync", ["user_id"], name: "usrid_fk", using: :btree
+
   create_table "nozzle_ring", id: false, force: :cascade do |t|
     t.integer "part_id", limit: 8, null: false
   end
@@ -428,12 +512,11 @@ ActiveRecord::Schema.define(version: 20160304161120) do
     t.datetime "write_date",              null: false
     t.integer  "create_uid",    limit: 8, null: false
     t.integer  "write_uid",     limit: 8, null: false
-    t.boolean  "primary_part"
+    t.boolean  "primary_part",            null: false
   end
 
   add_index "sales_note_part", ["create_uid"], name: "sales_note_part_user_create_uid_idx", using: :btree
   add_index "sales_note_part", ["part_id"], name: "sales_note_part_part_part_id_idx", using: :btree
-  add_index "sales_note_part", ["sales_note_id", "primary_part"], name: "sales_note_part_primary_part_unq_idx", unique: true, using: :btree
   add_index "sales_note_part", ["write_uid"], name: "sales_note_part_user_write_uid_idx", using: :btree
 
   create_table "sales_notes_audits", force: :cascade do |t|
@@ -550,10 +633,14 @@ ActiveRecord::Schema.define(version: 20160304161120) do
     t.string  "password",             limit: 100,                null: false
     t.string  "password_reset_token", limit: 36
     t.boolean "enabled",                          default: true, null: false
+    t.integer "auth_provider_id",     limit: 8
+    t.string  "username",             limit: 255,                null: false
   end
 
+  add_index "user", ["auth_provider_id"], name: "fk_authp", using: :btree
   add_index "user", ["email"], name: "email", unique: true, using: :btree
   add_index "user", ["password_reset_token"], name: "password_reset_token", unique: true, using: :btree
+  add_index "user", ["username"], name: "username", unique: true, using: :btree
 
   create_table "user_group", id: false, force: :cascade do |t|
     t.integer "user_id",  limit: 8, null: false
@@ -718,6 +805,7 @@ ActiveRecord::Schema.define(version: 20160304161120) do
     t.string  "turbo_part_number", limit: 255
   end
 
+  add_foreign_key "auth_provider_ldap", "auth_provider", column: "id", name: "auth_provider_ldap_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "backplate", "part", name: "backplate_ibfk_1"
   add_foreign_key "bearing_housing", "part", name: "bearing_housing_ibfk_1"
   add_foreign_key "bearing_spacer", "part", name: "bearing_spacer_ibfk_1"
@@ -736,6 +824,8 @@ ActiveRecord::Schema.define(version: 20160304161120) do
   add_foreign_key "cartridge", "part", name: "cartridge_ibfk_1"
   add_foreign_key "changelog", "user", name: "changelog_ibfk_1"
   add_foreign_key "compressor_wheel", "part", name: "compressor_wheel_ibfk_1"
+  add_foreign_key "crit_dim", "crit_dim", column: "parent_id", name: "crit_dim_ibfk_2", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "crit_dim", "part_type", name: "crit_dim_ibfk_1"
   add_foreign_key "gasket", "gasket_type", name: "gasket_ibfk_2"
   add_foreign_key "gasket", "part", name: "gasket_ibfk_1"
   add_foreign_key "group_role", "groups", name: "group_role_ibfk_1"
@@ -751,6 +841,7 @@ ActiveRecord::Schema.define(version: 20160304161120) do
   add_foreign_key "kit_part_common_component", "part", name: "kit_part_common_component_ibfk_2"
   add_foreign_key "manfr", "manfr", column: "parent_manfr_id", name: "manfr_ibfk_2"
   add_foreign_key "manfr", "manfr_type", name: "manfr_ibfk_1"
+  add_foreign_key "mas90sync", "user", name: "usrid_fk"
   add_foreign_key "nozzle_ring", "part", name: "nozzle_ring_ibfk_1"
   add_foreign_key "part", "manfr", name: "part_ibfk_1"
   add_foreign_key "part", "part_type", name: "part_ibfk_2"
@@ -784,6 +875,7 @@ ActiveRecord::Schema.define(version: 20160304161120) do
   add_foreign_key "turbo_car_model_engine_year", "turbo", column: "part_id", primary_key: "part_id", name: "turbo_car_model_engine_year_ibfk_2"
   add_foreign_key "turbo_model", "turbo_type", name: "turbo_model_ibfk_1"
   add_foreign_key "turbo_type", "manfr", name: "turbo_type_ibfk_1"
+  add_foreign_key "user", "auth_provider", name: "fk_authp", on_update: :cascade, on_delete: :nullify
   add_foreign_key "user_group", "groups", name: "user_group_ibfk_2"
   add_foreign_key "user_group", "user", name: "user_group_ibfk_1"
 end
