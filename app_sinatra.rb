@@ -52,6 +52,8 @@ end
 
 
 
+
+
 get '/sync/product_images/updates'  do
   system = ExternalSystemsManagment.new
   last_id = system.get_info request.host,'images'
@@ -72,4 +74,10 @@ get '/sync/product_images/all'  do
   syncer.sync_all
   response = {:result => true, :path => 'all_images.json'}
   response.to_json
+end
+
+
+get '/audit/product/image' do
+  manager = ProductImageManager.new
+  manager.run params
 end
