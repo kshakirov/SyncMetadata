@@ -34,7 +34,11 @@ class AttributeConfigurer
             :type => get_magento_type(dimension.data_type),
             :tolerance => dimension.tolerance || 0,
             :is_visible_in_list => dimension.is_visible_in_list || 0 ,
-            :is_critical_dimension => dimension.is_critical_dimension || 1
+            :is_critical_dimension => dimension.is_critical_dimension || 1,
+            :searchable => dimension.is_visible_in_list || 0,
+            :filterable => dimension.is_visible_in_list || 0,
+            :comparable => dimension.is_visible_in_list || 0,
+            :is_filterable_in_search => dimension.is_visible_in_list || 0,
         }
 
     }
