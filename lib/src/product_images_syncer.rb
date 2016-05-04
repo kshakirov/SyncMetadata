@@ -36,9 +36,12 @@ class ProductsImagesSyncer
   end
 
 
-  def has_product_older_images id
-    images = ProductImage.where("part_id = ?", id)
-    if images.size > 1
+
+
+
+  def has_product_older_images part_id, image_id
+    images = ProductImage.where("part_id = ? and id < ?", part_id, image_id)
+    if images.size > 0
       true
     else
       false
@@ -105,7 +108,10 @@ class ProductsImagesSyncer
       begin
         if update.action=='insert'
           image = ProductImage.find(update.image_id)
-          item = {:sku => image.part_id, :images => [], :action => update.action, :base_image =>  !has_product_older_images(image.part_id)}
+          item = {:sku => image.part_id,
+                  :images => [],
+                  :action => update.action,
+                  :base_image =>  !has_product_older_images(image.part_id, image.id)}
 
           image_folders.each do |folder|
             file_name = "#{image.part_id}_#{image.id}.jpg"
