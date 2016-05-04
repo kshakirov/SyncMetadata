@@ -12,32 +12,6 @@ class ProductsImagesSyncer
 
   end
 
-  def search_files image, index
-    file_path = @import_dir + 'resized/'
-    dirs = ['1000/', '135/', '50/']
-    image_roles = ['image', 'small_image', 'thumbnail']
-    paths = []
-    dirs.each_with_index do |dir, i|
-
-      filename = dir + image.part_id.to_s + "_" + image.id.to_s + ".jpg"
-      if File.exist? (file_path + filename)
-        #puts  "Exists #{filename}"
-        image_object = {}
-        image_object[image_roles[i]] = filename
-        paths.push image_object
-
-      end
-    end
-    paths
-  end
-
-  def write_csv_from_image_data data
-    @fd.write data.to_json
-  end
-
-
-
-
 
   def has_product_older_images part_id, image_id
     images = ProductImage.where("part_id = ? and id < ?", part_id, image_id)
@@ -49,25 +23,6 @@ class ProductsImagesSyncer
 
   end
 
-  def sync_all
-    @fd= File.open("#{@file_server_dir}/all_images.json", 'w')
-    products = Part.all
-    images_data = []
-    products.each do |p|
-      if p.product_image.all.size > 0
-        images = p.product_image.all
-        image_data = {:sku => p.id, :images => []}
-        images.each_with_index do |image, index|
-          image_data[:images].push(search_files image, index)
-        end
-        images_data.push image_data
-      end
-
-    end
-    write_csv_from_image_data images_data
-    @fd.close
-    images_data
-  end
 
 
   def _prepair_folders
@@ -145,6 +100,62 @@ class ProductsImagesSyncer
 
     end
     done
+  end
+
+
+  def create_images_archive items
+    fd= File.open("#{@file_server_dir}/images/image_updates.json", 'w')
+    fd.write items.to_json
+    fd.close
+    _create_images_archive
+  end
+
+  def create_image_temp_file image, item
+    image_folders = ['1000', '135', 50]
+    has_result = false
+    image_folders.each do |folder|
+      file_name = "#{image.part_id}_#{image.id}.jpg"
+      import_file_path = "#{@import_dir}resized/#{folder}/"
+      if File.exist? (import_file_path + file_name)
+        puts file_name
+        has_result = true
+        image_item = {}
+        image_item[folder] = file_name
+        item[:images].push image_item
+        FileUtils.copy(import_file_path + file_name, @file_server_dir + 'images/' + folder.to_s + '/' + file_name)
+
+      end
+    end
+    has_result
+
+  end
+
+  def create_image_data_item image
+    item = {:sku => image.part_id,
+            :images => [],
+            :action => 'insert',
+            :base_image =>  !has_product_older_images(image.part_id, image.id)}
+    item
+  end
+
+  def get_images_by_ids ids
+    items = []
+    is_archive_not_empty = false
+    ids.each do |id|
+      begin
+      image = ProductImage.find(id.to_i)
+      item = create_image_data_item image
+      if create_image_temp_file(image,item)
+        is_archive_not_empty = true
+        items.push item
+      end
+      rescue Exception => e
+        puts "No image " + id.to_s
+      end
+    end
+    if is_archive_not_empty
+      create_images_archive items
+    end
   end
 
 

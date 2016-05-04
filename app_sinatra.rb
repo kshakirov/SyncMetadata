@@ -51,9 +51,6 @@ end
 
 
 
-
-
-
 get '/sync/product_images/updates'  do
   system = ExternalSystemsManagment.new
   last_id = system.get_info request.host,'images'
@@ -69,15 +66,21 @@ get '/sync/product_images/updates'  do
 
 end
 
-get '/sync/product_images/all'  do
-  syncer = ProductsImagesSyncer.new settings.images_collection, settings.file_server_dir
-  syncer.sync_all
-  response = {:result => true, :path => 'all_images.json'}
-  response.to_json
-end
+
 
 
 get '/audit/product/image' do
   manager = ProductImageManager.new
   manager.run params
+end
+
+post '/audit/product/image/upload' do
+  manager = ProductImageManager.new
+
+  ids = JSON.parse(request.body.read)
+  unless ids.nil?
+    manager.get_missed_images ids, settings.images_collection, settings.file_server_dir
+
+  end
+
 end
