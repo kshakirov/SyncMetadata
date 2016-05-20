@@ -10,6 +10,10 @@ set :bind, '0.0.0.0'
 set :port, 4568
 set :images_collection, ENV['METADATA_IMAGES_COLLECTION']
 set :file_server_dir, ENV['METADATA_FILESERVER_DIR']
+configure do
+  set :configManager,  ConfigManager.new
+end
+
 
 
 p ENV['RAILS_ENV']
@@ -29,8 +33,11 @@ get '/sync/sales_notes/'  do
 end
 
 get '/config/attributes/' do
-  configurer = ConfigManager.new
-  configurer.get_critical_dimension_attributes
+  settings.configManager.get_critical_dimension_attributes
+end
+
+get '/config/attributeSets/' do
+  settings.configManager.get_attribute_sets
 end
 
 

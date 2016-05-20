@@ -17,4 +17,5 @@ require_relative 'src/crit_dim'
 require_relative 'src/product_syncer/product_sync_inserted'
 require_relative 'src/configure_syncer/attribute_configurer'
 require_relative 'src/configure_syncer/config_manager'
+require_relative 'src/configure_syncer/attribute_set_configurer'
 
