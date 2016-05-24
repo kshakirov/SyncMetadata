@@ -4,8 +4,10 @@ require_relative "../test_helper"
 class TestProductsManager < MiniTest::Unit::TestCase
   def setup
     @manager = ProductSyncManager.new
+    @crit_dim_classes_creator = CritDimClassesCreator.new
   end
   def test_all
+      @crit_dim_classes_creator.dynamically_create_classes
       @manager.update_all_products
   end
 

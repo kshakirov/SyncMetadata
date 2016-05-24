@@ -3,7 +3,7 @@ class ChangeSalesNotesTriggerUpdate < ActiveRecord::Migration
 
     #добавляем ограничение CHECK
     execute <<-SQL
-     DROP TRIGGER `real_update_sales_notes`
+     DROP TRIGGER  IF EXISTS `real_update_sales_notes`
     SQL
     execute <<-SQL
       CREATE TRIGGER `real_update_sales_notes` AFTER UPDATE ON `sales_note`

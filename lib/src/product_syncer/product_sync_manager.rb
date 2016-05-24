@@ -16,16 +16,24 @@ class ProductSyncManager
     false
   end
 
+  def _is_part_type_allowed? part_type_name
+    if part_type_name.downcase.include? 'part'
+      false
+    end
+    true
+  end
+
 
   def _add_products_to_collection
     Part.find_each(batch_size: 100) do |p|
       begin
-        if _has_crit_dim_attrs? p.part_type_id
+        if _has_crit_dim_attrs? p.part_type_id and _is_part_type_allowed? p.part_type.magento_attribute_set
+          puts 'id  =>' + p.id.to_s
           YAML.dump @prod_attr_reader.run(p.id), @yaml_file
         end
       rescue Exception => e
         puts e.message
-        @yaml_file.close
+        #@yaml_file.close
       end
     end
     @yaml_file.close

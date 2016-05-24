@@ -37,7 +37,8 @@ class AttributeConfigurer
     part_type_name = dimension.part_type.magento_attribute_set
     options = {
         :attribute_set => part_type_name,
-        :code => add_part_type_prefix(dimension.json_name, part_type_name),
+        #:code => add_part_type_prefix(dimension.json_name, part_type_name),
+        :code => dimension.idx_name,
         :options => {
             :label => dimension.name,
             :type => get_magento_type(dimension.data_type),
