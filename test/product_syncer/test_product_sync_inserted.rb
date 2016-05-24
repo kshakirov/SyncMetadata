@@ -3,7 +3,7 @@ require_relative "../test_helper"
 
 class TestProductSyncInserted < MiniTest::Unit::TestCase
   def setup
-    @inserter = ProductSyncInserted.new
+    @inserter = ProductAttrsReader.new
   end
   def test_normalize
     assert_equal "bearing_spacer", @inserter.normalize_set_name("Bearing Spacer")
@@ -15,8 +15,9 @@ class TestProductSyncInserted < MiniTest::Unit::TestCase
   end
 
   def test_turbo_type
-    product = @inserter.run '45498'
+    product = @inserter.run '43895'
     assert_equal nil, product[:turbo_type]
+    p product
 
   end
 end

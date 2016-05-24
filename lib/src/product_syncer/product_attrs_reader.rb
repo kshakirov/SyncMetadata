@@ -1,4 +1,8 @@
-class ProductSyncInserted
+class ProductAttrsReader
+
+  def initialize
+    @crit_dim_attr_reader = ProductCriticalAtttsReader.new
+  end
 
   def get_attribute_set set, product, part
     a_set = set
@@ -31,8 +35,10 @@ class ProductSyncInserted
     inserted_product[:manufacturer] = part.manfr.name
     inserted_product[:description] = part.description
     inserted_product[:part_number] = part.manfr_part_num
-    get_attribute_set(part.part_type.magento_attribute_set, inserted_product, part)
+    p part.part_type.magento_attribute_set
+    #get_attribute_set(part.part_type.magento_attribute_set, inserted_product, part)
     inserted_product[:turbo_type] = get_turbo_type part
+    inserted_product[:custom_attrs] = @crit_dim_attr_reader.get_crit_dim_attributes(part.part_type.id, id)
 
     inserted_product
   end

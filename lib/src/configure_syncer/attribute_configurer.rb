@@ -10,7 +10,7 @@ class AttributeConfigurer
     elsif inner_type == 'ENUMERATION'
       'int'
     else
-      'null'
+      'text'
     end
   end
 
