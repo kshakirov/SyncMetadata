@@ -1,7 +1,7 @@
 class ProductSyncManager
 
   def initialize
-    @yaml_file = File.open('data.yml', 'w')
+    @yaml_file = File.open(__dir__ + '/../../../public/all_products.yml', 'w')
     @prod_attr_reader = ProductAttrsReader.new
     @crit_dim_part_types = CritDim.select(:part_type_id).distinct
   end

@@ -22,9 +22,8 @@ class ProductCriticalAtttsReader
     attributes = {}
 
     attrs.each do |attr|
-      #key_name = add_part_type_prefix(attr.json_name, magento_set_name)
       key_name = attr.idx_name
-      attributes[key_name] = product.send(attr.json_name) || 0
+      attributes[key_name] = {'value' => product.send(attr.json_name), 'type' => attr.data_type}
     end
     attributes
   end

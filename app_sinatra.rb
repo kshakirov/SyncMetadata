@@ -40,6 +40,10 @@ get '/config/attributeSets/' do
   settings.configManager.get_attribute_sets
 end
 
+get '/files/:filename' do |filename|
+  send_file "public/#{filename}", :filename => filename, :type => 'Application/octet-stream'
+end
+
 
 get '/sync/sales_notes/updates'  do
     system = ExternalSystemsManagment.new
