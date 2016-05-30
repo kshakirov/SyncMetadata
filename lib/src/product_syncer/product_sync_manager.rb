@@ -35,6 +35,7 @@ class ProductSyncManager
         puts e.message
         #@yaml_file.close
       end
+
     end
     @yaml_file.close
   end
@@ -43,7 +44,11 @@ class ProductSyncManager
     _add_products_to_collection
   end
 
-  def update_products
-
+  def update_products audit_records
+    updated_products = []
+      audit_records.each do |record|
+        updated_products.push(@prod_attr_reader.run(record['id']))
+      end
+    updated_products.to_json
   end
 end

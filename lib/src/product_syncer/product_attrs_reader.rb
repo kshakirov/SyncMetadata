@@ -19,12 +19,20 @@ class ProductAttrsReader
     product
   end
 
-  def get_turbo_type  part
+  def get_turbo_type part
     type = TurboType.where("manfr_id = ? and import_pk = ?", part.manfr.id, part.import_pk)
     if type.first
       return type.first.name
     end
     nil
+  end
+
+  def get_ti_interchange id
+    val = VmagmiTiChra.find id
+    if val.has_ti_chra == 'no'
+      return false
+    end
+    true
   end
 
   def run id
@@ -37,6 +45,7 @@ class ProductAttrsReader
     inserted_product[:part_number] = part.manfr_part_num
     inserted_product[:part_type] = part.part_type.magento_attribute_set
     inserted_product[:turbo_type] = get_turbo_type part
+    inserted_product[:has_ti_interchange] = get_ti_interchange part.id
     inserted_product[:custom_attrs] = @crit_dim_attr_reader.get_crit_dim_attributes(part.part_type.id, id)
 
     inserted_product

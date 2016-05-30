@@ -17,4 +17,10 @@ class TestProductsManager < MiniTest::Unit::TestCase
       p crit_dim.size
 
   end
+
+  def test_update_records_audit
+    record = {'id' => '42128'}
+    @crit_dim_classes_creator.dynamically_create_classes
+    p @manager.update_products [record]
+  end
 end
