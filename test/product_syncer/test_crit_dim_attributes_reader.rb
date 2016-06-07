@@ -25,4 +25,12 @@ class TestProductsAttrsReader < MiniTest::Unit::TestCase
     assert_equal "408105-0124",  attrs[62][:partNumber]
 
   end
+
+
+  def test_bom
+    @reader = BomAttributeReader.new
+    attrs = @reader.get_attribute 6392
+    p attrs
+
+  end
 end

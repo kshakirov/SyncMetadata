@@ -1,7 +1,7 @@
 class WhereUsedAttrReader
 
   def  get_attribute id
-    vw = VWhereUsed.where principal_id: id
+    vw = VWhereUsed.where(principal_id: id).limit(100)
     response = {}
     if vw.size > 0
        vw.each do  |v|
@@ -39,11 +39,55 @@ class WhereUsedAttrReader
   end
 end
 
+
+class BomAttributeReader
+
+  def aggregate_ti_part_skus response, bom_new
+    if response.has_key? bom_new[:sku]
+      response[bom_new[:sku]][:ti_part_sku].push bom_new[:ti_part_sku]
+    else
+      response[bom_new[:sku]] = bom_new
+      response[bom_new[:sku]][:ti_part_sku] =  [bom_new[:ti_part_sku]]
+    end
+  end
+
+  def conv_from_hash_to_array response
+    values = []
+    response.each do |key, value|
+      values.push value
+    end
+
+  end
+
+  def get_main_fields bom
+    main = {  "alt_part_sku": [],
+              "distance": bom.distance,
+              "has_bom": bom.has_bom,
+              "part_type_parent": bom.part_type_parent,
+              "quantity": bom.quantity,
+              "sku": bom.descendant_sku,
+              "ti_part_sku":   bom.int_sku,
+              "type": bom.type}
+  end
+
+  def get_attribute id
+    boms = VmagmiBom.where(ancestor_sku: id).limit(100)
+    response = {}
+    boms.each do |bom|
+      aggregate_ti_part_skus response, get_main_fields(bom)
+    end
+    conv_from_hash_to_array response
+  end
+end
+
+
+
 class ProductAttrsReader
 
   def initialize
     @crit_dim_attr_reader = ProductCriticalAtttsReader.new
     @vwhere_used_attr_reader = WhereUsedAttrReader.new
+    @bom_attr_reader = BomAttributeReader.new
   end
 
   def get_attribute_set set, product, part
@@ -78,7 +122,11 @@ class ProductAttrsReader
   end
 
   def get_where_used id
-    @vwhere_used_attr_reader.get_attribute id
+    @vwhere_used_attr_reader.get_attribute(id).to_json
+  end
+
+  def get_bom id
+    @bom_attr_reader.get_attribute(id).to_json
   end
 
   def run id
@@ -93,6 +141,7 @@ class ProductAttrsReader
     inserted_product[:turbo_type] = get_turbo_type part
     inserted_product[:has_ti_interchange] = get_ti_interchange part.id
     inserted_product[:where_used] = get_where_used part.id
+    #inserted_product[:bom] = get_bom part.id
     inserted_product[:custom_attrs] = @crit_dim_attr_reader.get_crit_dim_attributes(part.part_type.id, id)
 
     inserted_product
