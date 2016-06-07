@@ -1,7 +1,49 @@
+class WhereUsedAttrReader
+
+  def  get_attribute id
+    vw = VWhereUsed.where principal_id: id
+    response = {}
+    if vw.size > 0
+       vw.each do  |v|
+         aggregate_turbo_part_numbers response, get_main_fields(v)
+       end
+      response
+    else
+      nil
+    end
+  end
+
+  private
+  def get_main_fields item
+    main = {
+        "sku": item.sku,
+        "manufacturer": item.manufacturer,
+        "partNumber": item.part_number,
+        "tiSku": item.ti_sku,
+        "tiPartNumber": item.ti_part_number,
+        "partType": item.part_type,
+        "turboType": item.turbo_type,
+        "turboPartNumbers": item.turbo_part_number,
+    }
+
+  end
+
+  def aggregate_turbo_part_numbers response, item_new
+    if response.has_key? item_new[:sku]
+      response[item_new[:sku]][:turboPartNumbers].push item_new[:turboPartNumbers]
+    else
+      response[item_new[:sku]] = item_new
+      response[item_new[:sku]][:turboPartNumbers] = [item_new[:turboPartNumbers]]
+
+    end
+  end
+end
+
 class ProductAttrsReader
 
   def initialize
     @crit_dim_attr_reader = ProductCriticalAtttsReader.new
+    @vwhere_used_attr_reader = WhereUsedAttrReader.new
   end
 
   def get_attribute_set set, product, part
@@ -35,6 +77,10 @@ class ProductAttrsReader
     true
   end
 
+  def get_where_used id
+    @vwhere_used_attr_reader.get_attribute id
+  end
+
   def run id
     part = Part.find(id)
     inserted_product = {}
@@ -46,6 +92,7 @@ class ProductAttrsReader
     inserted_product[:part_type] = part.part_type.magento_attribute_set
     inserted_product[:turbo_type] = get_turbo_type part
     inserted_product[:has_ti_interchange] = get_ti_interchange part.id
+    inserted_product[:where_used] = get_where_used part.id
     inserted_product[:custom_attrs] = @crit_dim_attr_reader.get_crit_dim_attributes(part.part_type.id, id)
 
     inserted_product
