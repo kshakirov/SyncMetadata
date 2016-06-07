@@ -33,4 +33,22 @@ class TestProductsAttrsReader < MiniTest::Unit::TestCase
     p attrs
 
   end
+  def test_service_kits
+    @reader = ServiceKitAttributeReader.new
+    attrs = @reader.get_attribute 6392
+    p attrs
+
+  end
+  def test_interchanges
+    @reader = InterchangeAttributeReader.new
+    attrs = @reader.get_attribute 6392
+    p attrs
+
+  end
+  def test_apps
+    @reader = ApplicationAttrReader.new
+    attrs = @reader.get_attribute 6392
+    p attrs
+
+  end
 end

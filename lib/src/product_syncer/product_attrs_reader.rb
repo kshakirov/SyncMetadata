@@ -1,3 +1,22 @@
+class ServiceKitAttributeReader
+  def get_main_fields kit
+    main = {:sku => kit.kitSku,
+    :partNumber => kit.kitPartNumber,
+    :description => kit.description,
+    :tiSku=> kit.tiKitSku,
+    :tiPartNumber => kit.tiKitPartNumber
+    }
+  end
+  def get_attribute id
+    response = []
+    sks = VmagmiServiceKit.where(sku: id).limit(100)
+    sks.each do |sk|
+      response.push(get_main_fields sk)
+    end
+    response
+  end
+end
+
 class WhereUsedAttrReader
 
   def  get_attribute id
@@ -80,6 +99,41 @@ class BomAttributeReader
   end
 end
 
+class InterchangeAttributeReader
+
+
+
+  def get_attribute id
+    response = []
+    ints = Vint.where(part_id: id).limit(100)
+    ints.each do |int|
+        response.push int.i_part_id
+    end
+    response
+  end
+end
+
+
+class ApplicationAttrReader
+
+  def get_stringified_field app
+    "#{app.car_make}!!#{app.car_model}!!#{app.car_year || 'not specified'}!!!!"
+
+  end
+
+  def get_attribute id
+    previous = false
+    apps = Vapp.where(part_id: id).limit(100)
+    apps.each do |app|
+      unless previous
+        previous = get_stringified_field app
+      else
+        previous = previous + '||' + get_stringified_field(app)
+      end
+    end
+    previous
+  end
+end
 
 
 class ProductAttrsReader
@@ -88,6 +142,9 @@ class ProductAttrsReader
     @crit_dim_attr_reader = ProductCriticalAtttsReader.new
     @vwhere_used_attr_reader = WhereUsedAttrReader.new
     @bom_attr_reader = BomAttributeReader.new
+    @service_kit_reader = ServiceKitAttributeReader.new
+    @interchange_attr_reader = InterchangeAttributeReader.new
+    @application_attr_reader = ApplicationAttrReader.new
   end
 
   def get_attribute_set set, product, part
@@ -129,6 +186,17 @@ class ProductAttrsReader
     @bom_attr_reader.get_attribute(id).to_json
   end
 
+  def get_service_kits id
+    @service_kit_reader.get_attribute(id).to_json
+  end
+  def get_interchanges id
+    @interchange_attr_reader.get_attribute(id).to_json
+  end
+
+  def get_applications id
+    @application_attr_reader.get_attribute id
+  end
+
   def run id
     part = Part.find(id)
     inserted_product = {}
@@ -141,7 +209,12 @@ class ProductAttrsReader
     inserted_product[:turbo_type] = get_turbo_type part
     inserted_product[:has_ti_interchange] = get_ti_interchange part.id
     inserted_product[:where_used] = get_where_used part.id
+    #still too slow
     #inserted_product[:bom] = get_bom part.id
+    inserted_product[:service_kits] = get_service_kits part.id
+    inserted_product[:interchanges] = get_interchanges part.id
+    #still too slow
+    #inserted_product[:applications] = get_applications part.id
     inserted_product[:custom_attrs] = @crit_dim_attr_reader.get_crit_dim_attributes(part.part_type.id, id)
 
     inserted_product

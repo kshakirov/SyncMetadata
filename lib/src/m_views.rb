@@ -9,11 +9,18 @@ end
 
 class VmagmiBom < ActiveRecord::Base
   self.inheritance_column = nil
-  #attr_accessible :type
   self.table_name = 'vmagmi_bom'
 end
 
 class VmagmiServiceKit < ActiveRecord::Base
-  #attr_accessible :type
   self.table_name = 'vmagmi_service_kits'
+end
+
+class Vint < ActiveRecord::Base
+self.table_name = 'vint'
+end
+
+
+class Vapp < ActiveRecord::Base
+  self.table_name = 'vapp'
 end
