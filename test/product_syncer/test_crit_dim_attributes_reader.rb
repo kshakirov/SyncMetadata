@@ -51,4 +51,22 @@ class TestProductsAttrsReader < MiniTest::Unit::TestCase
     p attrs
 
   end
+
+  def test_foreign_interchange
+    sql =   "   SELECT " +
+        "       p.id AS sku, " +
+        "       max(case when p1.manfr_id = 11 then 1 else 0 end) AS has_ti_interchange, " +
+        "       max(case when p1.manfr_id <> p.manfr_id then 1 else 0 end) AS has_foreign_interchange " +
+        "   FROM " +
+        "       part AS p " +
+        #      -- inactive products are excluded
+        "       LEFT JOIN (interchange_item AS ii1 " +
+        "       INNER JOIN interchange_item AS ii2 ON ii1.interchange_header_id = ii2.interchange_header_id " +
+        "       AND ii1.part_id <> ii2.part_id " +
+        "       INNER JOIN part AS p1 ON ii2.part_id = p1.id AND p1.inactive = False) ON p.id = ii1.part_id " +
+        "   WHERE p.id IN (" + productIdsCommas + ") " +
+        "   GROUP BY p.id"
+
+    records_array = ActiveRecord::Base.connection.execute(sql)
+  end
 end

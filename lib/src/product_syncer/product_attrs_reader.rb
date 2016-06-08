@@ -104,10 +104,14 @@ class InterchangeAttributeReader
 
 
   def get_attribute id
-    response = []
+    response = false
     ints = Vint.where(part_id: id).limit(100)
     ints.each do |int|
-        response.push int.i_part_id
+      if not response
+        response = int.i_part_id.to_s
+      else
+        response = response + ',' + int.i_part_id.to_s
+      end
     end
     response
   end
@@ -125,7 +129,7 @@ class ApplicationAttrReader
     previous = false
     apps = Vapp.where(part_id: id).limit(100)
     apps.each do |app|
-      unless previous
+      if not previous
         previous = get_stringified_field app
       else
         previous = previous + '||' + get_stringified_field(app)
@@ -190,11 +194,17 @@ class ProductAttrsReader
     @service_kit_reader.get_attribute(id).to_json
   end
   def get_interchanges id
-    @interchange_attr_reader.get_attribute(id).to_json
+    @interchange_attr_reader.get_attribute(id)
   end
 
   def get_applications id
     @application_attr_reader.get_attribute id
+  end
+
+  def add_part_type_specific_attrs inserted_product, label, value
+    unless value.nil? or   value == '[]' or value == '{}'
+      inserted_product[label] = value
+    end
   end
 
   def run id
@@ -208,13 +218,13 @@ class ProductAttrsReader
     inserted_product[:part_type] = part.part_type.magento_attribute_set
     inserted_product[:turbo_type] = get_turbo_type part
     inserted_product[:has_ti_interchange] = get_ti_interchange part.id
-    inserted_product[:where_used] = get_where_used part.id
+    add_part_type_specific_attrs inserted_product, :where_used, get_where_used(part.id)
+    add_part_type_specific_attrs inserted_product, :service_kits, get_service_kits(part.id)
+    add_part_type_specific_attrs inserted_product, :interchanges, get_interchanges(part.id)
     #still too slow
-    #inserted_product[:bom] = get_bom part.id
-    inserted_product[:service_kits] = get_service_kits part.id
-    inserted_product[:interchanges] = get_interchanges part.id
+    #add_part_type_specific_attrs inserted_product, :bill_of_materials, get_bom(part.id)
     #still too slow
-    #inserted_product[:applications] = get_applications part.id
+    #add_part_type_specific_attrs inserted_product, :application_detail, get_applications(part.id)
     inserted_product[:custom_attrs] = @crit_dim_attr_reader.get_crit_dim_attributes(part.part_type.id, id)
 
     inserted_product
