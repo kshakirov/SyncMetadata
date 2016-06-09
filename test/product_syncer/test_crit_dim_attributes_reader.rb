@@ -53,20 +53,34 @@ class TestProductsAttrsReader < MiniTest::Unit::TestCase
   end
 
   def test_foreign_interchange
-    sql =   "   SELECT " +
-        "       p.id AS sku, " +
-        "       max(case when p1.manfr_id = 11 then 1 else 0 end) AS has_ti_interchange, " +
-        "       max(case when p1.manfr_id <> p.manfr_id then 1 else 0 end) AS has_foreign_interchange " +
-        "   FROM " +
-        "       part AS p " +
-        #      -- inactive products are excluded
-        "       LEFT JOIN (interchange_item AS ii1 " +
-        "       INNER JOIN interchange_item AS ii2 ON ii1.interchange_header_id = ii2.interchange_header_id " +
-        "       AND ii1.part_id <> ii2.part_id " +
-        "       INNER JOIN part AS p1 ON ii2.part_id = p1.id AND p1.inactive = False) ON p.id = ii1.part_id " +
-        "   WHERE p.id IN (" + productIdsCommas + ") " +
-        "   GROUP BY p.id"
+    @reader = ForeignInterchangeReader.new
+    response = @reader.get_attribute 36
+    assert_equal true, response
+    response = @reader.get_attribute 42128
+    assert_equal true, response
+=begin
+    sql_template = ERB.new %q{
+             SELECT
+                p.id AS sku,
+                max(case when p1.manfr_id = 11 then 1 else 0 end) AS has_ti_interchange,
+                max(case when p1.manfr_id <> p.manfr_id then 1 else 0 end) AS has_foreign_interchange
+            FROM
+                part AS p
 
+                LEFT JOIN (interchange_item AS ii1
+                INNER JOIN interchange_item AS ii2 ON ii1.interchange_header_id = ii2.interchange_header_id
+                AND ii1.part_id <> ii2.part_id
+                INNER JOIN part AS p1 ON ii2.part_id = p1.id AND p1.inactive = False) ON p.id = ii1.part_id
+            WHERE p.id=<%= id %>
+            GROUP BY p.id
+        }.gsub(/\s+/, " ").strip
+      id = 36
+      sql =  sql_template.result(binding)
+    p sql
     records_array = ActiveRecord::Base.connection.execute(sql)
+     records_array.each do |r|
+      p r
+    end
+=end
   end
 end

@@ -7,4 +7,5 @@ require 'json'
 require 'zlib'
 require 'archive/tar/minitar'
 require 'active_support/all'
+require 'erb'
 
