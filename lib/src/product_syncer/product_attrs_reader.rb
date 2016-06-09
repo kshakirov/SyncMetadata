@@ -177,6 +177,34 @@ class ForeignInterchangeReader
 end
 
 
+class HasTiInterchange < ForeignInterchangeReader
+  def prepare_response sql_template, id
+    id = id
+    sql = @sql_template.result(binding)
+    result = ActiveRecord::Base.connection.execute(sql)
+    result.each do |r|
+      if r and r.size== 3 and r[1]==1
+        return true
+      else
+        return false
+      end
+    end
+  end
+end
+
+
+class HasTiChra
+  def get_attribute id
+    val = VmagmiTiChra.find id
+    if val.has_ti_chra == 'no'
+      return false
+    elsif val.has_ti_chra == 'yes'
+      return true
+    end
+    false
+  end
+end
+
 
 class ProductAttrsReader
 
@@ -188,6 +216,8 @@ class ProductAttrsReader
     @interchange_attr_reader = InterchangeAttributeReader.new
     @application_attr_reader = ApplicationAttrReader.new
     @fgn_interchange_attr_reader = ForeignInterchangeReader.new
+    @has_ti_interchange_attr_reader = HasTiInterchange.new
+    @has_ti_chra_attr_reader = HasTiChra.new
   end
 
   def get_attribute_set set, product, part
@@ -214,11 +244,11 @@ class ProductAttrsReader
   end
 
   def get_ti_interchange id
-    val = VmagmiTiChra.find id
-    if val.has_ti_chra == 'no'
-      return false
-    end
-    true
+    @has_ti_interchange_attr_reader.get_attribute id
+  end
+
+  def get_ti_chra id
+    @has_ti_chra_attr_reader.get_attribute id
   end
 
   def get_where_used id
@@ -262,6 +292,7 @@ class ProductAttrsReader
     inserted_product[:part_type] = part.part_type.magento_attribute_set
     inserted_product[:turbo_type] = get_turbo_type part
     inserted_product[:has_ti_interchange] = get_ti_interchange part.id
+    inserted_product[:has_ti_chra] = get_ti_chra part.id
     inserted_product[:has_foreign_interchange] = get_foreign_interchange part.id
     add_part_type_specific_attrs inserted_product, :where_used, get_where_used(part.id)
     add_part_type_specific_attrs inserted_product, :service_kits, get_service_kits(part.id)

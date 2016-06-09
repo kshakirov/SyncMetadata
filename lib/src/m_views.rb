@@ -20,6 +20,10 @@ class Vint < ActiveRecord::Base
 self.table_name = 'vint'
 end
 
+class VintTi < ActiveRecord::Base
+  self.table_name = 'vint_ti'
+end
+
 
 class Vapp < ActiveRecord::Base
   self.table_name = 'vapp'

@@ -27,6 +27,23 @@ class TestProductsAttrsReader < MiniTest::Unit::TestCase
   end
 
 
+  def test_ti_interchange
+      @reader = HasTiInterchange.new
+      attr = @reader.get_attribute 6392
+      assert_equal false, attr
+      attr = @reader.get_attribute 31
+      assert_equal true, attr
+  end
+
+
+  def test_ti_chra
+    @reader = HasTiChra.new
+    attr = @reader.get_attribute 6392
+    assert_equal false, attr
+    attr = @reader.get_attribute 307
+    assert_equal true, attr
+  end
+
   def test_bom
     @reader = BomAttributeReader.new
     attrs = @reader.get_attribute 6392
