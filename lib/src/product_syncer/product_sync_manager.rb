@@ -4,6 +4,8 @@ class ProductSyncManager
     @yaml_file = File.open(__dir__ + '/../../../public/all_products.yml', 'w')
     @prod_attr_reader = ProductAttrsReader.new
     @crit_dim_part_types = CritDim.select(:part_type_id).distinct
+    class_creator = CritDimClassesCreator.new
+    class_creator.dynamically_create_classes
   end
 
   def _has_crit_dim_attrs? id
@@ -49,6 +51,15 @@ class ProductSyncManager
       audit_records.each do |record|
         updated_products.push(@prod_attr_reader.run(record['id']))
       end
+    updated_products.to_json
+  end
+
+
+  def update_products_by_ids ids
+    updated_products = []
+    ids.each do |id|
+      updated_products.push @prod_attr_reader.run(id)
+    end
     updated_products.to_json
   end
 end

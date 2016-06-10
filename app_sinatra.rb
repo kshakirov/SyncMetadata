@@ -12,6 +12,7 @@ set :images_collection, ENV['METADATA_IMAGES_COLLECTION']
 set :file_server_dir, ENV['METADATA_FILESERVER_DIR']
 configure do
   set :configManager,  ConfigManager.new
+  set :productSyncManager,  ProductSyncManager.new
 end
 
 
@@ -42,6 +43,11 @@ end
 
 get '/files/:filename' do |filename|
   send_file "public/#{filename}", :filename => filename, :type => 'Application/octet-stream'
+end
+
+post '/product/update/specific' do
+    ids = JSON.parse(request.body.read)
+    settings.productSyncManager.update_products_by_ids ids
 end
 
 

@@ -86,6 +86,12 @@ class TestProductsAttrsReader < MiniTest::Unit::TestCase
 
   end
 
+  def test_is_crit_dim_part_type
+    part_type_analyzer = PartTypeAnalyzer.new
+    assert_equal false, part_type_analyzer.is_crit_dim_part_type(2)
+    assert_equal true, part_type_analyzer.is_crit_dim_part_type(6)
+  end
+
 
 
 end

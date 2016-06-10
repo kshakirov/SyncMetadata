@@ -1,3 +1,25 @@
+class PartTypeAnalyzer
+
+
+  def is_crit_dim_part_type part_type_id
+    part_types = _get_crit_dims_part_types
+    part_types.each {|part_type|
+      p part_type
+      if part_type.part_type_id == part_type_id
+        return true
+      end
+    }
+    false
+  end
+
+  def _get_crit_dims_part_types
+    CritDim.select(:part_type_id).distinct
+
+  end
+
+end
+
+
 class ServiceKitAttributeReader
   def get_main_fields kit
     main = {:sku => kit.kitSku,
@@ -30,7 +52,7 @@ end
 class WhereUsedAttrReader
 
   def  get_attribute id
-    vw = VWhereUsed.where(principal_id: id).limit(100)
+    vw = VWhereUsed.where(principal_id: id)
     response = {}
     if vw.size > 0
        vw.each do  |v|
@@ -183,7 +205,7 @@ class InterchangeAttributeReader
 
   def get_attribute id
     response = false
-    ints = Vint.where(part_id: id).limit(100)
+    ints = Vint.where(part_id: id)
     ints.each do |int|
       if not response
         response = int.i_part_id.to_s
@@ -350,6 +372,7 @@ class ProductAttrsReader
     @fgn_interchange_attr_reader = ForeignInterchangeReader.new
     @has_ti_interchange_attr_reader = HasTiInterchange.new
     @has_ti_chra_attr_reader = HasTiChra.new
+    @part_type_analyzer = PartTypeAnalyzer.new
   end
 
   def get_attribute_set set, product, part
@@ -431,7 +454,7 @@ class ProductAttrsReader
     add_part_type_specific_attrs inserted_product, :interchanges, get_interchanges(part.id)
     add_part_type_specific_attrs inserted_product, :bill_of_materials, get_bom(part.id)
     add_part_type_specific_attrs inserted_product, :application_detail, get_applications(part.id)
-    inserted_product[:custom_attrs] = @crit_dim_attr_reader.get_crit_dim_attributes(part.part_type.id, id)
+    inserted_product[:custom_attrs] = @crit_dim_attr_reader.get_crit_dim_attributes(part.part_type.id, id) if @part_type_analyzer.is_crit_dim_part_type(part.part_type.id)
 
     inserted_product
   end
