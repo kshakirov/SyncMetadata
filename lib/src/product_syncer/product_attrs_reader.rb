@@ -7,13 +7,23 @@ class ServiceKitAttributeReader
     :tiPartNumber => kit.tiKitPartNumber
     }
   end
-  def get_attribute id
-    response = []
-    sks = VmagmiServiceKit.where(sku: id).limit(100)
-    sks.each do |sk|
-      response.push(get_main_fields sk)
+
+  def convert_hash_to_array hash
+    array = []
+    hash.each do |key,value|
+      array.push value
     end
-    response
+    array
+  end
+  def get_attribute id
+    hash = {}
+    sks = VmagmiServiceKit.where(sku: id)
+    sks.each do |sk|
+      unless  hash.has_key? sk.kitSku.to_s
+        hash[sk.kitSku.to_s] = get_main_fields(sk)
+      end
+    end
+     convert_hash_to_array hash
   end
 end
 
@@ -61,41 +71,109 @@ end
 
 class BomAttributeReader
 
-  def aggregate_ti_part_skus response, bom_new
-    if response.has_key? bom_new[:sku]
-      response[bom_new[:sku]][:ti_part_sku].push bom_new[:ti_part_sku]
-    else
-      response[bom_new[:sku]] = bom_new
-      response[bom_new[:sku]][:ti_part_sku] =  [bom_new[:ti_part_sku]]
-    end
+
+  def initialize
+    @sql_template = ERB.new %q{
+    SELECT DISTINCT
+      ii2.part_id AS ancestor_sku,
+      ii.part_id AS descendant_sku,
+      bd.qty AS quantity,
+      bd.distance AS distance,
+      IF(((ii2.part_id <> b.parent_part_id)
+              OR (ii.part_id <> bc.child_part_id)),
+          'Interchange',
+          bd.type) AS type,
+      dppt.value AS part_type_parent,
+      IF((db.id IS NOT NULL), 1, 0) AS has_bom,
+      ba.child_part_id AS alt_sku,
+      bam.id AS alt_mfr_id,
+      ip.id AS int_sku
+    FROM
+        bom_descendant bd
+        JOIN bom b ON bd.part_bom_id = b.id
+        JOIN interchange_item ii1 ON b.parent_part_id = ii1.part_id
+        JOIN interchange_item ii2 ON ii2.interchange_header_id = ii1.interchange_header_id
+        JOIN bom bc ON bd.descendant_bom_id = bc.id
+        JOIN interchange_item ii3 ON bc.child_part_id = ii3.part_id
+        JOIN interchange_item ii ON ii3.interchange_header_id = ii.interchange_header_id
+
+        JOIN part dp ON dp.id = ii.part_id
+        JOIN part_type dpt ON dpt.id = dp.part_type_id
+        LEFT JOIN part_type dppt ON dppt.id = dpt.parent_part_type_id
+
+        left join
+        (bom_alt_item bai
+        JOIN bom ba ON ba.id = bai.bom_id
+        JOIN part pa ON pa.id = bai.part_id
+        JOIN manfr bam ON bam.id = pa.manfr_id) ON bai.bom_id = bd.part_bom_id
+
+        left join
+        (interchange_item ii1t
+        JOIN interchange_item ii2t ON ii2t.interchange_header_id = ii1t.interchange_header_id AND ii1t.part_id <> ii2t.part_id
+        JOIN part ip ON ip.id = ii2t.part_id and ip.manfr_id = 11) on ii1t.part_id = ii.part_id
+
+        LEFT JOIN bom db ON db.parent_part_id = ii.part_id
+
+        left join
+        (bom_descendant bdd
+                JOIN bom b4 ON bdd.part_bom_id = b4.id and bdd.type = 'direct'
+                JOIN bom b4c ON bdd.descendant_bom_id = b4c.id
+        ) ON ii2.part_id = b4.parent_part_id
+            AND ii.part_id = b4c.child_part_id
+            and IF(((ii2.part_id <> b.parent_part_id)
+                     OR (ii.part_id <> bc.child_part_id)),
+                    'Interchange',
+                    bd.type) = 'Interchange'
+
+    WHERE
+        ISNULL(bdd.id)
+        and ii2.part_id = <%= part_id %>
+    }.gsub(/\s+/, " ").strip
   end
 
-  def conv_from_hash_to_array response
+  def conv_from_hash_to_array hash
     values = []
-    response.each do |key, value|
+    hash.each do |key, value|
       values.push value
     end
-
+    values
   end
 
-  def get_main_fields bom
+  def create_hash  bom
     main = {  "alt_part_sku": [],
-              "distance": bom.distance,
-              "has_bom": bom.has_bom,
-              "part_type_parent": bom.part_type_parent,
-              "quantity": bom.quantity,
-              "sku": bom.descendant_sku,
-              "ti_part_sku":   bom.int_sku,
-              "type": bom.type}
+              "distance": bom[3],
+              "has_bom": bom[6] == 1 ? true: false ,
+              "part_type_parent": bom[5],
+              "quantity": bom[2],
+              "sku": bom[1],
+              "ti_part_sku":   [bom[9]],
+              "type": bom[4]}
+  end
+
+  def aggregate_ti_part_skus boms
+   hash = {}
+    boms.each do |bom|
+      if hash.has_key? bom[1]
+        hash[bom[1]][:ti_part_sku].push bom[9]
+      else
+        hash[bom[1]] = create_hash(bom)
+      end
+    end
+    hash
+  end
+
+  def prepare_response id
+    part_id = id
+    sql = @sql_template.result(binding)
+    boms = ActiveRecord::Base.connection.execute(sql)
+    hash = aggregate_ti_part_skus boms
+    conv_from_hash_to_array hash
+
   end
 
   def get_attribute id
-    boms = VmagmiBom.where(ancestor_sku: id).limit(100)
-    response = {}
-    boms.each do |bom|
-      aggregate_ti_part_skus response, get_main_fields(bom)
-    end
-    conv_from_hash_to_array response
+    prepare_response id
+
   end
 end
 
@@ -119,15 +197,55 @@ end
 
 
 class ApplicationAttrReader
+  def initialize
+    @sql_template = ERB.new %q{
+      select
+        distinct
+        q.part_id,
+        cmake.name AS car_make,
+        cyear.name AS car_year,
+        cmodel.name AS car_model
+      from
+        (
+            select
+                ii.part_id,
+                ii2.part_id AS turbo_id
+            FROM
+                bom_descendant bd
+                JOIN bom b ON bd.part_bom_id = b.id
+                JOIN interchange_item ii1 ON b.parent_part_id = ii1.part_id
+                JOIN interchange_item ii2 ON ii2.interchange_header_id = ii1.interchange_header_id
+                JOIN bom bc ON bd.descendant_bom_id = bc.id
+                JOIN interchange_item ii3 ON bc.child_part_id = ii3.part_id
+                JOIN interchange_item ii ON ii3.interchange_header_id = ii.interchange_header_id
+                join turbo t on ii2.part_id = t.part_id
+            where
+                ii.part_id = <%= part_id %>
+            UNION
+            SELECT
+                turbo.part_id AS part_id,
+                turbo.part_id AS turbo_id
+            FROM
+                turbo
+            where
+                part_id = <%= part_id %>
+        ) as q
+        JOIN turbo_car_model_engine_year c ON c.part_id = q.turbo_id
+        LEFT JOIN car_model_engine_year cmey ON cmey.id = c.car_model_engine_year_id
+        LEFT JOIN car_model cmodel ON cmodel.id = cmey.car_model_id
+        LEFT JOIN car_make cmake ON cmake.id = cmodel.car_make_id
+        LEFT JOIN car_year cyear ON cyear.id = cmey.car_year_id
+    }.gsub(/\s+/, " ").strip
+  end
+
 
   def get_stringified_field app
-    "#{app.car_make}!!#{app.car_model}!!#{app.car_year || 'not specified'}!!!!"
+    "#{app[1]}!!#{app[3]}!!#{app[2]||'not specified'}!!#{app[0]}!!"
 
   end
 
-  def get_attribute id
+  def get_stringified_result apps
     previous = false
-    apps = Vapp.where(part_id: id).limit(100)
     apps.each do |app|
       if not previous
         previous = get_stringified_field app
@@ -137,6 +255,20 @@ class ApplicationAttrReader
     end
     previous
   end
+
+  def prepare_response sql_template, id
+    part_id = id
+    sql = @sql_template.result(binding)
+    apps = ActiveRecord::Base.connection.execute(sql)
+    get_stringified_result apps
+
+  end
+
+  def get_attribute id
+     prepare_response @sql_template, id
+  end
+
+
 end
 
 class ForeignInterchangeReader
@@ -276,7 +408,7 @@ class ProductAttrsReader
 
 
   def add_part_type_specific_attrs inserted_product, label, value
-    unless value.nil? or   value == '[]' or value == '{}'
+    unless value.nil? or   value == '[]' or value == '{}' or not value
       inserted_product[label] = value
     end
   end
@@ -297,10 +429,8 @@ class ProductAttrsReader
     add_part_type_specific_attrs inserted_product, :where_used, get_where_used(part.id)
     add_part_type_specific_attrs inserted_product, :service_kits, get_service_kits(part.id)
     add_part_type_specific_attrs inserted_product, :interchanges, get_interchanges(part.id)
-    #still too slow
-    #add_part_type_specific_attrs inserted_product, :bill_of_materials, get_bom(part.id)
-    #still too slow
-    #add_part_type_specific_attrs inserted_product, :application_detail, get_applications(part.id)
+    add_part_type_specific_attrs inserted_product, :bill_of_materials, get_bom(part.id)
+    add_part_type_specific_attrs inserted_product, :application_detail, get_applications(part.id)
     inserted_product[:custom_attrs] = @crit_dim_attr_reader.get_crit_dim_attributes(part.part_type.id, id)
 
     inserted_product
