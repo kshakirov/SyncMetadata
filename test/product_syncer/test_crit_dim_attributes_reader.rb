@@ -12,8 +12,6 @@ class TestProductsAttrsReader < MiniTest::Unit::TestCase
     @crit_dim_classes_creator.dynamically_create_classes
     attrs = @reader.get_crit_dim_attributes('13', 43895)
     assert_equal 35, attrs.size
-
-    p attrs
   end
 
 
@@ -90,6 +88,23 @@ class TestProductsAttrsReader < MiniTest::Unit::TestCase
     part_type_analyzer = PartTypeAnalyzer.new
     assert_equal false, part_type_analyzer.is_crit_dim_part_type(2)
     assert_equal true, part_type_analyzer.is_crit_dim_part_type(6)
+  end
+
+
+
+
+  def test_turbo_model_other
+    id = 42128
+    @reader = TurboModelAttributeReader.new
+    models, types = @reader.get_attribute id
+    assert_equal 27, models.size
+    assert_equal 1, models.select{|m | m =='RHB52W-52002P15NRBRL3911EZ'}.size
+    assert_equal "RHB5",  types[0]
+
+    models, types = @reader.get_attribute 25179
+    assert_equal 1, models.select{|m | m =='K27-3262MGB/20.22'}.size
+    assert_equal 'K27', types[0]
+
   end
 
 

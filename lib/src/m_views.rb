@@ -28,3 +28,10 @@ end
 class Vapp < ActiveRecord::Base
   self.table_name = 'vapp'
 end
+
+
+class VbomDescendant < ActiveRecord::Base
+  self.inheritance_column = nil
+  self.table_name = 'vbom_descendant'
+end
+

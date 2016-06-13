@@ -13,3 +13,32 @@ class Part < ActiveRecord::Base
 
 
 end
+
+
+class Turbo < ActiveRecord::Base
+  self.table_name = 'turbo'
+  self.primary_key = "part_id"
+  belongs_to :part, class_name: "Part",
+             foreign_key: 'part_id'
+  belongs_to :turbo_model, class_name: "TurboModel",
+             foreign_key: 'turbo_model_id'
+end
+
+
+class TurboType < ActiveRecord::Base
+  self.table_name =  'turbo_type'
+  self.primary_key = "id"
+  belongs_to :manfr, class_name: "Manfr",
+             foreign_key: 'manfr_id'
+
+
+end
+
+
+class TurboModel < ActiveRecord::Base
+  self.table_name =  'turbo_model'
+  self.primary_key = "id"
+
+  belongs_to :turbo_type, class_name: "TurboType",
+             foreign_key: 'turbo_type_id'
+end

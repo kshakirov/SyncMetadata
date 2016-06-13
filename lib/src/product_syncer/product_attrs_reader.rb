@@ -1,10 +1,7 @@
 class PartTypeAnalyzer
-
-
   def is_crit_dim_part_type part_type_id
     part_types = _get_crit_dims_part_types
     part_types.each {|part_type|
-      p part_type
       if part_type.part_type_id == part_type_id
         return true
       end
@@ -373,6 +370,7 @@ class ProductAttrsReader
     @has_ti_interchange_attr_reader = HasTiInterchange.new
     @has_ti_chra_attr_reader = HasTiChra.new
     @part_type_analyzer = PartTypeAnalyzer.new
+    @turbo_type_model_attr_reader = TurboModelAttributeReader.new
   end
 
   def get_attribute_set set, product, part
@@ -390,13 +388,6 @@ class ProductAttrsReader
     product
   end
 
-  def get_turbo_type part
-    type = TurboType.where("manfr_id = ? and import_pk = ?", part.manfr.id, part.import_pk)
-    if type.first
-      return type.first.name
-    end
-    nil
-  end
 
   def get_ti_interchange id
     @has_ti_interchange_attr_reader.get_attribute id
@@ -436,6 +427,13 @@ class ProductAttrsReader
     end
   end
 
+  def get_turbo_and_model_type part_id, inserted_product
+    turbo_model, turbo_type = @turbo_type_model_attr_reader.get_attribute part_id
+    inserted_product[:turbo_model] = turbo_model
+    inserted_product[:turbo_type] = turbo_type
+
+  end
+
   def run id
     part = Part.find(id)
     inserted_product = {}
@@ -445,10 +443,11 @@ class ProductAttrsReader
     inserted_product[:description] = part.description
     inserted_product[:part_number] = part.manfr_part_num
     inserted_product[:part_type] = part.part_type.magento_attribute_set
-    inserted_product[:turbo_type] = get_turbo_type part
     inserted_product[:has_ti_interchange] = get_ti_interchange part.id
     inserted_product[:has_ti_chra] = get_ti_chra part.id
     inserted_product[:has_foreign_interchange] = get_foreign_interchange part.id
+
+    get_turbo_and_model_type part.id, inserted_product
     add_part_type_specific_attrs inserted_product, :where_used, get_where_used(part.id)
     add_part_type_specific_attrs inserted_product, :service_kits, get_service_kits(part.id)
     add_part_type_specific_attrs inserted_product, :interchanges, get_interchanges(part.id)
