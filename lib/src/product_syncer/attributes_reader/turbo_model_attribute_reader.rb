@@ -38,21 +38,17 @@ class TurboModelAttributeReader
 
 
 
-  def normalize_tyrbo_types types_hash
-    types_hash.keys
-  end
 
   def get_turbo_model responses
-    models = []
-    turbo_types = {}
+    models = Set.new
+    turbo_types = Set.new
     i = 0
     responses.each do |r|
       model = TurboModel.find r[1]
-      models.push(model.name)
-      turbo_types[model.turbo_type.name] = i
-      i += 1
+      models.add(model.name)
+      turbo_types.add(model.turbo_type.name)
     end
-    return models, normalize_tyrbo_types(turbo_types)
+    return models.to_a, turbo_types.to_a
   end
 
   def process_response id

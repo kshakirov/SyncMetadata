@@ -105,6 +105,9 @@ class TestProductsAttrsReader < MiniTest::Unit::TestCase
     assert_equal 1, models.select{|m | m =='K27-3262MGB/20.22'}.size
     assert_equal 'K27', types[0]
 
+    id = 42212
+    assert_equal 1, models.select{|m | m =='GT1752'}.size
+
   end
 
 

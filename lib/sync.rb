@@ -27,4 +27,5 @@ require_relative 'src/configure_syncer/attribute_options_configurer'
 require_relative 'src/configure_syncer/config_manager'
 require_relative 'src/configure_syncer/attribute_set_configurer'
 require_relative 'src/critical_dimension_classes'
+require 'set'
 
