@@ -34,6 +34,40 @@ ActiveRecord::Schema.define(version: 20160419142546) do
   add_index "auth_provider_ldap", ["name"], name: "name", unique: true, using: :btree
 
   create_table "backplate", id: false, force: :cascade do |t|
+    t.integer "part_id",                   limit: 8,                         null: false
+    t.integer "dynCs",                     limit: 4
+    t.integer "superbackFlatback",         limit: 4
+    t.integer "mountingHoles",             limit: 4
+    t.integer "mountingHoleThreadCallout", limit: 4
+    t.decimal "diaA",                                precision: 6, scale: 3
+    t.decimal "diaATol",                             precision: 6, scale: 3
+    t.decimal "diaB",                                precision: 6, scale: 3
+    t.decimal "diaBTol",                             precision: 6, scale: 3
+    t.decimal "diaC",                                precision: 6, scale: 3
+    t.decimal "diaCTol",                             precision: 6, scale: 3
+    t.decimal "diaD",                                precision: 6, scale: 3
+    t.decimal "diaDTol",                             precision: 6, scale: 3
+    t.decimal "cwcDiaE",                             precision: 6, scale: 3
+    t.decimal "cwcDiaETol",                          precision: 6, scale: 3
+    t.decimal "boreDia",                             precision: 6, scale: 4
+    t.decimal "boreDiaTol",                          precision: 6, scale: 4
+    t.decimal "mountingHoleDia",                     precision: 6, scale: 3
+    t.decimal "oal",                                 precision: 6, scale: 3
+    t.decimal "oalTol",                              precision: 6, scale: 3
+    t.decimal "hubPosF",                             precision: 6, scale: 3
+    t.decimal "hubPosFTol",                          precision: 6, scale: 3
+    t.decimal "ccLocPosG",                           precision: 6, scale: 3
+    t.decimal "ccLocPosGTol",                        precision: 6, scale: 3
+    t.decimal "leadInChmfr12Angle",                  precision: 6, scale: 1
+    t.decimal "leadInChmfrLen",                      precision: 6, scale: 3
+    t.integer "matL",                      limit: 4
+    t.decimal "weight",                              precision: 6, scale: 1
+    t.integer "diagram",                   limit: 4
+  end
+
+  add_index "backplate", ["part_id"], name: "part_id", using: :btree
+
+  create_table "backplate_sealplate", id: false, force: :cascade do |t|
     t.integer "part_id",                     limit: 8,                            null: false
     t.integer "seal_type_id",                limit: 8
     t.string  "style_compressor_wheel",      limit: 100
@@ -45,41 +79,9 @@ ActiveRecord::Schema.define(version: 20160419142546) do
     t.string  "notes",                       limit: 500
     t.decimal "secondary_diameter",                      precision: 10, scale: 6
     t.decimal "overall_height",                          precision: 10, scale: 6
-    t.integer "dynCs",                       limit: 4
-    t.integer "superbackFlatback",           limit: 4
-    t.integer "mountingHoles",               limit: 4
-    t.integer "mountingHoleThreadCallout",   limit: 4
-    t.decimal "diaA",                                    precision: 6,  scale: 3
-    t.decimal "diaATol",                                 precision: 6,  scale: 3
-    t.decimal "diaB",                                    precision: 6,  scale: 3
-    t.decimal "diaBTol",                                 precision: 6,  scale: 3
-    t.decimal "diaC",                                    precision: 6,  scale: 3
-    t.decimal "diaCTol",                                 precision: 6,  scale: 3
-    t.decimal "diaD",                                    precision: 6,  scale: 3
-    t.decimal "diaDTol",                                 precision: 6,  scale: 3
-    t.decimal "cwcDiaE",                                 precision: 6,  scale: 3
-    t.decimal "cwcDiaETol",                              precision: 6,  scale: 3
-    t.decimal "boreDia",                                 precision: 6,  scale: 4
-    t.decimal "boreDiaTol",                              precision: 6,  scale: 4
-    t.decimal "mountingHoleDia",                         precision: 6,  scale: 3
-    t.decimal "oal",                                     precision: 6,  scale: 3
-    t.decimal "oalTol",                                  precision: 6,  scale: 3
-    t.decimal "hubPosF",                                 precision: 6,  scale: 3
-    t.decimal "hubPosFTol",                              precision: 6,  scale: 3
-    t.decimal "ccLocPosG",                               precision: 6,  scale: 3
-    t.decimal "ccLocPosGTol",                            precision: 6,  scale: 3
-    t.decimal "leadInChmfr05Angle",                      precision: 6,  scale: 1
-    t.decimal "leadInChmfrLen",                          precision: 6,  scale: 3
-    t.integer "matL",                        limit: 4
-    t.decimal "weight",                                  precision: 6,  scale: 1
-    t.integer "diagram",                     limit: 4
   end
 
-  add_index "backplate", ["dynCs"], name: "dynCs", using: :btree
-  add_index "backplate", ["matL"], name: "matL", using: :btree
-  add_index "backplate", ["mountingHoleThreadCallout"], name: "mountingHoleThreadCallout", using: :btree
-  add_index "backplate", ["part_id"], name: "part_id", using: :btree
-  add_index "backplate", ["superbackFlatback"], name: "superbackFlatback", using: :btree
+  add_index "backplate_sealplate", ["part_id"], name: "part_id", using: :btree
 
   create_table "bearing_housing", id: false, force: :cascade do |t|
     t.integer "part_id",              limit: 8,                           null: false
@@ -332,8 +334,8 @@ ActiveRecord::Schema.define(version: 20160419142546) do
     t.integer "boreless",             limit: 4
     t.decimal "inducerDiameterA",                 precision: 6,  scale: 3
     t.decimal "inducerDiameterATol",              precision: 6,  scale: 3
-    t.decimal "exducerBDiameter",                 precision: 6,  scale: 3
-    t.decimal "exducerBDiameterTol",              precision: 6,  scale: 3
+    t.decimal "exducerDiameterB",                 precision: 6,  scale: 3
+    t.decimal "exducerDiameterBTol",              precision: 6,  scale: 3
     t.decimal "tipLocation",                      precision: 6,  scale: 3
     t.decimal "tipLocationTol",                   precision: 6,  scale: 3
     t.decimal "tipHeightD",                       precision: 6,  scale: 3
@@ -357,7 +359,6 @@ ActiveRecord::Schema.define(version: 20160419142546) do
     t.integer "diagram",              limit: 4
   end
 
-  add_index "compressor_wheel", ["bladeCount"], name: "bladeCount", using: :btree
   add_index "compressor_wheel", ["boreless"], name: "boreless", using: :btree
   add_index "compressor_wheel", ["extendedTips"], name: "extendedTips", using: :btree
   add_index "compressor_wheel", ["flatbackSuperback"], name: "flatbackSuperback", using: :btree
@@ -383,7 +384,7 @@ ActiveRecord::Schema.define(version: 20160419142546) do
     t.boolean "tolerance"
     t.string  "name",                  limit: 255,                                      null: false
     t.string  "json_name",             limit: 48,                                       null: false
-    t.string  "idx_name",              limit: 32,                                       null: false
+    t.string  "idx_name",              limit: 30,                                       null: false
     t.boolean "null_allowed",                                                           null: false
     t.string  "null_display",          limit: 32
     t.decimal "min_val",                           precision: 15, scale: 6
@@ -428,6 +429,12 @@ ActiveRecord::Schema.define(version: 20160419142546) do
     t.integer  "images_last",      limit: 4,     default: 0
   end
 
+  create_table "fast_wearing_component", id: false, force: :cascade do |t|
+    t.integer "part_id", limit: 8, null: false
+  end
+
+  add_index "fast_wearing_component", ["part_id"], name: "part_id", using: :btree
+
   create_table "fitting", id: false, force: :cascade do |t|
     t.integer "part_id",   limit: 8,                         null: false
     t.decimal "diameterA",           precision: 6, scale: 3
@@ -444,12 +451,12 @@ ActiveRecord::Schema.define(version: 20160419142546) do
 
   create_table "gasket", id: false, force: :cascade do |t|
     t.integer "part_id",            limit: 8,                            null: false
-    t.integer "gasket_type_id",     limit: 8,                            null: false
+    t.integer "gasket_type_id",     limit: 8
     t.integer "type",               limit: 4
     t.integer "splitSinglePassage", limit: 4
     t.string  "shape",              limit: 4096
     t.integer "boltHoles",          limit: 4
-    t.decimal "a",                               precision: 6, scale: 3
+    t.decimal "passageA",                        precision: 6, scale: 3
     t.decimal "b",                               precision: 6, scale: 2
     t.decimal "c",                               precision: 6, scale: 2
     t.decimal "d",                               precision: 6, scale: 2
@@ -457,7 +464,7 @@ ActiveRecord::Schema.define(version: 20160419142546) do
     t.decimal "f",                               precision: 6, scale: 2
     t.decimal "g",                               precision: 6, scale: 2
     t.decimal "h",                               precision: 6, scale: 2
-    t.decimal "thicknessJ",                      precision: 6, scale: 3
+    t.decimal "thickness",                       precision: 6, scale: 3
     t.integer "material",           limit: 4
     t.decimal "weight",                          precision: 6, scale: 1
     t.integer "diagram",            limit: 4
@@ -523,6 +530,39 @@ ActiveRecord::Schema.define(version: 20160419142546) do
   add_index "heatshield", ["part_id"], name: "part_id", using: :btree
   add_index "heatshield", ["rolledLip"], name: "rolledLip", using: :btree
 
+  create_table "heatshield_shroud", id: false, force: :cascade do |t|
+    t.integer "part_id",          limit: 8,                             null: false
+    t.decimal "overall_diameter",              precision: 10, scale: 6
+    t.decimal "inside_diameter",               precision: 10, scale: 6
+    t.decimal "inducer_diameter",              precision: 10, scale: 6
+    t.string  "notes",            limit: 500
+    t.decimal "diaA",                          precision: 6,  scale: 3
+    t.decimal "diaATol",                       precision: 6,  scale: 3
+    t.decimal "diaB",                          precision: 6,  scale: 3
+    t.decimal "diaBTol",                       precision: 6,  scale: 3
+    t.decimal "diaC",                          precision: 6,  scale: 3
+    t.decimal "diaCTol",                       precision: 6,  scale: 3
+    t.decimal "diaD",                          precision: 6,  scale: 3
+    t.decimal "diaDTol",                       precision: 6,  scale: 3
+    t.decimal "boreDiaE",                      precision: 6,  scale: 3
+    t.decimal "boreDiaETol",                   precision: 6,  scale: 3
+    t.decimal "boreHeightF",                   precision: 6,  scale: 3
+    t.decimal "boreHeightFTol",                precision: 6,  scale: 3
+    t.decimal "oalG",                          precision: 6,  scale: 3
+    t.decimal "oalGTol",                       precision: 6,  scale: 3
+    t.integer "gauge",            limit: 4
+    t.integer "matL",             limit: 4
+    t.string  "specialFeatures",  limit: 4096
+    t.integer "rolledLip",        limit: 4
+    t.decimal "weight",                        precision: 6,  scale: 1
+    t.integer "diagram",          limit: 4
+    t.decimal "thickness",                     precision: 6,  scale: 3
+  end
+
+  add_index "heatshield_shroud", ["matL"], name: "matL", using: :btree
+  add_index "heatshield_shroud", ["part_id"], name: "part_id", using: :btree
+  add_index "heatshield_shroud", ["rolledLip"], name: "rolledLip", using: :btree
+
   create_table "i_interchange_log", force: :cascade do |t|
     t.string   "description",           limit: 250
     t.integer  "part_num_id",           limit: 8
@@ -547,11 +587,11 @@ ActiveRecord::Schema.define(version: 20160419142546) do
 
   create_table "journal_bearing", id: false, force: :cascade do |t|
     t.integer "part_id",              limit: 8,                             null: false
-    t.decimal "outside_dim_min",                   precision: 10, scale: 6, null: false
-    t.decimal "outside_dim_max",                   precision: 10, scale: 6, null: false
-    t.decimal "inside_dim_min",                    precision: 10, scale: 6, null: false
-    t.decimal "inside_dim_max",                    precision: 10, scale: 6, null: false
-    t.decimal "width",                             precision: 10, scale: 6, null: false
+    t.decimal "outside_dim_min",                   precision: 10, scale: 6
+    t.decimal "outside_dim_max",                   precision: 10, scale: 6
+    t.decimal "inside_dim_min",                    precision: 10, scale: 6
+    t.decimal "inside_dim_max",                    precision: 10, scale: 6
+    t.decimal "width",                             precision: 10, scale: 6
     t.decimal "maxOuterDiameter",                  precision: 6,  scale: 4
     t.decimal "minOuterDiameter",                  precision: 6,  scale: 4
     t.decimal "maxInnerDiameter",                  precision: 6,  scale: 4
@@ -607,7 +647,7 @@ ActiveRecord::Schema.define(version: 20160419142546) do
 
   create_table "kit", id: false, force: :cascade do |t|
     t.integer "part_id",     limit: 8, null: false
-    t.integer "kit_type_id", limit: 8, null: false
+    t.integer "kit_type_id", limit: 8
   end
 
   add_index "kit", ["kit_type_id"], name: "kit_type_id", using: :btree
@@ -626,6 +666,12 @@ ActiveRecord::Schema.define(version: 20160419142546) do
     t.string  "name",      limit: 1000, null: false
     t.integer "import_pk", limit: 8
   end
+
+  create_table "major_component", id: false, force: :cascade do |t|
+    t.integer "part_id", limit: 8, null: false
+  end
+
+  add_index "major_component", ["part_id"], name: "part_id", using: :btree
 
   create_table "manfr", force: :cascade do |t|
     t.string  "name",            limit: 255, null: false
@@ -661,6 +707,18 @@ ActiveRecord::Schema.define(version: 20160419142546) do
   end
 
   add_index "mas90sync", ["user_id"], name: "usrid_fk", using: :btree
+
+  create_table "minor_component", id: false, force: :cascade do |t|
+    t.integer "part_id", limit: 8, null: false
+  end
+
+  add_index "minor_component", ["part_id"], name: "part_id", using: :btree
+
+  create_table "misc_minor_component", id: false, force: :cascade do |t|
+    t.integer "part_id", limit: 8, null: false
+  end
+
+  add_index "misc_minor_component", ["part_id"], name: "part_id", using: :btree
 
   create_table "nozzle_ring", id: false, force: :cascade do |t|
     t.integer "part_id",            limit: 8,                            null: false
@@ -744,14 +802,15 @@ ActiveRecord::Schema.define(version: 20160419142546) do
   add_index "oil_deflector", ["part_id"], name: "part_id", using: :btree
 
   create_table "part", force: :cascade do |t|
-    t.string  "manfr_part_num", limit: 255,                 null: false
-    t.integer "manfr_id",       limit: 8,                   null: false
-    t.integer "part_type_id",   limit: 8,                   null: false
-    t.string  "name",           limit: 255
-    t.string  "description",    limit: 255
-    t.boolean "inactive",                   default: false, null: false
-    t.integer "import_pk",      limit: 8
-    t.integer "version",        limit: 4,   default: 1,     null: false
+    t.string  "manfr_part_num",      limit: 255,                 null: false
+    t.integer "manfr_id",            limit: 8,                   null: false
+    t.integer "part_type_id",        limit: 8,                   null: false
+    t.string  "name",                limit: 255
+    t.string  "description",         limit: 255
+    t.boolean "inactive",                        default: false, null: false
+    t.integer "import_pk",           limit: 8
+    t.integer "version",             limit: 4,   default: 1,     null: false
+    t.string  "legend_img_filename", limit: 255
   end
 
   add_index "part", ["id", "version"], name: "id", unique: true, using: :btree
@@ -787,6 +846,7 @@ ActiveRecord::Schema.define(version: 20160419142546) do
     t.integer "import_pk",             limit: 8
     t.string  "magento_attribute_set", limit: 50
     t.string  "value",                 limit: 50,  null: false
+    t.string  "legend_img_filename",   limit: 255
   end
 
   add_index "part_type", ["parent_part_type_id"], name: "parent_part_type_id", using: :btree
@@ -813,7 +873,7 @@ ActiveRecord::Schema.define(version: 20160419142546) do
     t.decimal "i_gap_min",                       precision: 10, scale: 6
     t.decimal "i_gap_max",                       precision: 10, scale: 6
     t.decimal "installedDiameterA",              precision: 6,  scale: 3
-    t.decimal "gapInstalledDiameterB",           precision: 6,  scale: 3
+    t.decimal "gapBInstalledDiameter",           precision: 6,  scale: 3
     t.decimal "thicknessC",                      precision: 6,  scale: 3
     t.decimal "thicknessCTol",                   precision: 6,  scale: 3
     t.decimal "widthD",                          precision: 6,  scale: 4
@@ -862,8 +922,8 @@ ActiveRecord::Schema.define(version: 20160419142546) do
     t.integer "beveled",                  limit: 4
     t.integer "bowed",                    limit: 4
     t.decimal "freeDiaA",                              precision: 6, scale: 3
-    t.decimal "freeDiaLowerATol",                      precision: 6, scale: 3
-    t.decimal "freeDiaUpperATol",                      precision: 6, scale: 3
+    t.decimal "freeDiaALowerTol",                      precision: 6, scale: 3
+    t.decimal "freeDiaAUpperTol",                      precision: 6, scale: 3
     t.decimal "thicknessB",                            precision: 6, scale: 3
     t.decimal "thicknessBTol",                         precision: 6, scale: 3
     t.decimal "holeDiaC",                              precision: 6, scale: 3
@@ -942,8 +1002,6 @@ ActiveRecord::Schema.define(version: 20160419142546) do
 
   create_table "seal_plate", id: false, force: :cascade do |t|
     t.integer "part_id",                  limit: 8,                         null: false
-    t.decimal "leadInChmfr05Angle",                 precision: 6, scale: 1
-    t.decimal "leadInChmfrLen",                     precision: 6, scale: 3
     t.decimal "diaA",                               precision: 6, scale: 3
     t.decimal "diaATol",                            precision: 6, scale: 3
     t.decimal "diaB",                               precision: 6, scale: 3
@@ -968,11 +1026,12 @@ ActiveRecord::Schema.define(version: 20160419142546) do
     t.decimal "mountingHoleDia",                    precision: 6, scale: 3
     t.decimal "hubPosF",                            precision: 6, scale: 3
     t.decimal "hubPosFTol",                         precision: 6, scale: 3
+    t.decimal "leadInChmfr05Angle",                 precision: 6, scale: 1
+    t.decimal "leadInChmfrLen",                     precision: 6, scale: 3
     t.decimal "clampedWidthG",                      precision: 6, scale: 3
     t.decimal "clampedWidthGTol",                   precision: 6, scale: 3
     t.integer "superbackFlatbackSpecial", limit: 4
     t.integer "dynamicCarbonSeal",        limit: 4
-    t.integer "dynCs",                    limit: 4
     t.integer "matL",                     limit: 4
     t.decimal "weight",                             precision: 6, scale: 1
     t.integer "diagram",                  limit: 4
@@ -1108,6 +1167,12 @@ ActiveRecord::Schema.define(version: 20160419142546) do
 
   add_index "thrust_collar", ["part_id"], name: "part_id", using: :btree
 
+  create_table "thrust_part", id: false, force: :cascade do |t|
+    t.integer "part_id", limit: 8, null: false
+  end
+
+  add_index "thrust_part", ["part_id"], name: "part_id", using: :btree
+
   create_table "thrust_spacer", id: false, force: :cascade do |t|
     t.integer "part_id",                       limit: 8,                         null: false
     t.decimal "aOal",                                    precision: 6, scale: 4
@@ -1142,15 +1207,15 @@ ActiveRecord::Schema.define(version: 20160419142546) do
   add_index "thrust_spacer", ["part_id"], name: "part_id", using: :btree
 
   create_table "thrust_washer", id: false, force: :cascade do |t|
-    t.integer "part_id",       limit: 8,                         null: false
-    t.decimal "aThickness",              precision: 6, scale: 4
-    t.decimal "aThicknessTol",           precision: 6, scale: 4
-    t.decimal "bOd",                     precision: 6, scale: 3
-    t.decimal "bOdTol",                  precision: 6, scale: 3
-    t.decimal "cId",                     precision: 6, scale: 3
-    t.decimal "cIdTol",                  precision: 6, scale: 3
-    t.integer "material",      limit: 4
-    t.decimal "weight",                  precision: 6, scale: 1
+    t.integer "part_id",      limit: 8,                         null: false
+    t.decimal "thickness",              precision: 6, scale: 4
+    t.decimal "thicknessTol",           precision: 6, scale: 4
+    t.decimal "od",                     precision: 6, scale: 3
+    t.decimal "odTol",                  precision: 6, scale: 3
+    t.decimal "id_",                    precision: 6, scale: 3
+    t.decimal "idTol",                  precision: 6, scale: 3
+    t.integer "material",     limit: 4
+    t.decimal "weight",                 precision: 6, scale: 1
   end
 
   add_index "thrust_washer", ["part_id"], name: "part_id", using: :btree
@@ -1170,10 +1235,10 @@ ActiveRecord::Schema.define(version: 20160419142546) do
     t.decimal "stem_oe",                                       precision: 10, scale: 6
     t.string  "trim_no_blades",                    limit: 100
     t.string  "shaft_thread_f",                    limit: 100
-    t.decimal "inducerDiameterA",                              precision: 6,  scale: 3
-    t.decimal "inducerDiameterATol",                           precision: 6,  scale: 3
-    t.decimal "exducerDiameterB",                              precision: 6,  scale: 3
-    t.decimal "exducerDiameterBTol",                           precision: 6,  scale: 3
+    t.decimal "inducerDiaA",                                   precision: 6,  scale: 3
+    t.decimal "inducerDiaATol",                                precision: 6,  scale: 3
+    t.decimal "exducerDiaB",                                   precision: 6,  scale: 3
+    t.decimal "exducerDiaBTol",                                precision: 6,  scale: 3
     t.decimal "tipHeightC",                                    precision: 6,  scale: 3
     t.decimal "tipHeightCTol",                                 precision: 6,  scale: 3
     t.decimal "maxJournalDiameterD",                           precision: 6,  scale: 4
@@ -1187,10 +1252,10 @@ ActiveRecord::Schema.define(version: 20160419142546) do
     t.decimal "threadLengthG",                                 precision: 6,  scale: 2
     t.integer "thread",                            limit: 4
     t.integer "threadHand",                        limit: 4
-    t.decimal "pistonRingGrooveMajorDiameterI",                precision: 6,  scale: 3
+    t.decimal "pistonRingGrooveMajorDiaI",                     precision: 6,  scale: 3
     t.decimal "pistonRingGrooveMajorDiaITol",                  precision: 6,  scale: 3
-    t.decimal "pistonRingGrooveMinorDiameterJ",                precision: 6,  scale: 3
-    t.decimal "pistonRingGrooveMinorJDiaTol",                  precision: 6,  scale: 3
+    t.decimal "pistonRingGrooveMinorDiaJ",                     precision: 6,  scale: 3
+    t.decimal "pistonRingGrooveMinorDiaJTol",                  precision: 6,  scale: 3
     t.decimal "pistonRingGrooveWidthK",                        precision: 6,  scale: 3
     t.decimal "pistonRingGrooveWidthKTol",                     precision: 6,  scale: 3
     t.decimal "the2ndPistonRingGrooveMajorDia",                precision: 6,  scale: 3
@@ -1218,7 +1283,7 @@ ActiveRecord::Schema.define(version: 20160419142546) do
 
   create_table "turbo", id: false, force: :cascade do |t|
     t.integer "part_id",        limit: 8, null: false
-    t.integer "turbo_model_id", limit: 8, null: false
+    t.integer "turbo_model_id", limit: 8
     t.integer "cool_type_id",   limit: 8
   end
 
@@ -1431,12 +1496,12 @@ ActiveRecord::Schema.define(version: 20160419142546) do
 
   create_table "washer", id: false, force: :cascade do |t|
     t.integer "part_id",        limit: 8,                         null: false
-    t.decimal "odA",                      precision: 6, scale: 3
-    t.decimal "odATol",                   precision: 6, scale: 3
-    t.decimal "idB",                      precision: 6, scale: 3
-    t.decimal "idTolB",                   precision: 6, scale: 3
-    t.decimal "thicknessC",               precision: 6, scale: 3
-    t.decimal "thicknessTolC",            precision: 6, scale: 3
+    t.decimal "od",                       precision: 6, scale: 3
+    t.decimal "odTol",                    precision: 6, scale: 3
+    t.decimal "id_",                      precision: 6, scale: 3
+    t.decimal "idTol",                    precision: 6, scale: 3
+    t.decimal "thickness",                precision: 6, scale: 3
+    t.decimal "thicknessTol",             precision: 6, scale: 3
     t.integer "type",           limit: 4
     t.integer "material",       limit: 4
     t.integer "platingCoating", limit: 4
@@ -1447,11 +1512,7 @@ ActiveRecord::Schema.define(version: 20160419142546) do
   add_index "washer", ["part_id"], name: "part_id", using: :btree
 
   add_foreign_key "auth_provider_ldap", "auth_provider", column: "id", name: "auth_provider_ldap_ibfk_1", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "backplate", "crit_dim_enum_val", column: "dynCs", name: "backplate_ibfk_2", on_update: :cascade, on_delete: :nullify
-  add_foreign_key "backplate", "crit_dim_enum_val", column: "matL", name: "backplate_ibfk_5", on_update: :cascade, on_delete: :nullify
-  add_foreign_key "backplate", "crit_dim_enum_val", column: "mountingHoleThreadCallout", name: "backplate_ibfk_4", on_update: :cascade, on_delete: :nullify
-  add_foreign_key "backplate", "crit_dim_enum_val", column: "superbackFlatback", name: "backplate_ibfk_3", on_update: :cascade, on_delete: :nullify
-  add_foreign_key "backplate", "part", name: "backplate_ibfk_1"
+  add_foreign_key "backplate_sealplate", "part", name: "backplate_sealplate_ibfk_1"
   add_foreign_key "bearing_housing", "crit_dim_enum_val", column: "coolantPortThread1", name: "bearing_housing_ibfk_7", on_update: :cascade, on_delete: :nullify
   add_foreign_key "bearing_housing", "crit_dim_enum_val", column: "coolantPortThread2", name: "bearing_housing_ibfk_8", on_update: :cascade, on_delete: :nullify
   add_foreign_key "bearing_housing", "crit_dim_enum_val", column: "oilDrainFlangeThread", name: "bearing_housing_ibfk_6", on_update: :cascade, on_delete: :nullify
@@ -1478,13 +1539,12 @@ ActiveRecord::Schema.define(version: 20160419142546) do
   add_foreign_key "car_model_engine_year", "car_year", name: "car_model_engine_year_ibfk_3"
   add_foreign_key "cartridge", "part", name: "cartridge_ibfk_1"
   add_foreign_key "changelog", "user", name: "changelog_ibfk_1"
-  add_foreign_key "compressor_wheel", "crit_dim_enum_val", column: "bladeCount", name: "compressor_wheel_ibfk_7", on_update: :cascade, on_delete: :nullify
   add_foreign_key "compressor_wheel", "crit_dim_enum_val", column: "boreless", name: "compressor_wheel_ibfk_6", on_update: :cascade, on_delete: :nullify
   add_foreign_key "compressor_wheel", "crit_dim_enum_val", column: "extendedTips", name: "compressor_wheel_ibfk_4", on_update: :cascade, on_delete: :nullify
   add_foreign_key "compressor_wheel", "crit_dim_enum_val", column: "flatbackSuperback", name: "compressor_wheel_ibfk_3", on_update: :cascade, on_delete: :nullify
   add_foreign_key "compressor_wheel", "crit_dim_enum_val", column: "rotation", name: "compressor_wheel_ibfk_2", on_update: :cascade, on_delete: :nullify
-  add_foreign_key "compressor_wheel", "crit_dim_enum_val", column: "threadCallout", name: "compressor_wheel_ibfk_8", on_update: :cascade, on_delete: :nullify
-  add_foreign_key "compressor_wheel", "crit_dim_enum_val", column: "threadHand", name: "compressor_wheel_ibfk_9", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "compressor_wheel", "crit_dim_enum_val", column: "threadCallout", name: "compressor_wheel_ibfk_7", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "compressor_wheel", "crit_dim_enum_val", column: "threadHand", name: "compressor_wheel_ibfk_8", on_update: :cascade, on_delete: :nullify
   add_foreign_key "compressor_wheel", "crit_dim_enum_val", column: "threadedBore", name: "compressor_wheel_ibfk_5", on_update: :cascade, on_delete: :nullify
   add_foreign_key "compressor_wheel", "part", name: "compressor_wheel_ibfk_1"
   add_foreign_key "crit_dim", "crit_dim", column: "parent_id", name: "crit_dim_ibfk_3", on_update: :cascade, on_delete: :nullify
@@ -1500,6 +1560,9 @@ ActiveRecord::Schema.define(version: 20160419142546) do
   add_foreign_key "heatshield", "crit_dim_enum_val", column: "matL", name: "heatshield_ibfk_2", on_update: :cascade, on_delete: :nullify
   add_foreign_key "heatshield", "crit_dim_enum_val", column: "rolledLip", name: "heatshield_ibfk_3", on_update: :cascade, on_delete: :nullify
   add_foreign_key "heatshield", "part", name: "heatshield_ibfk_1"
+  add_foreign_key "heatshield_shroud", "crit_dim_enum_val", column: "matL", name: "heatshield_shroud_ibfk_2", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "heatshield_shroud", "crit_dim_enum_val", column: "rolledLip", name: "heatshield_shroud_ibfk_3", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "heatshield_shroud", "part", name: "heatshield_shroud_ibfk_1"
   add_foreign_key "interchange_header", "part", column: "new_part_id", name: "new_part_id"
   add_foreign_key "interchange_item", "interchange_header", name: "interchange_item_ibfk_1"
   add_foreign_key "interchange_item", "part", name: "interchange_item_ibfk_2"

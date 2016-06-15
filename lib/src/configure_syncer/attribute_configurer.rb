@@ -43,8 +43,7 @@ class AttributeConfigurer
             :label => dimension.name,
             :type => get_magento_type(dimension.data_type),
             :tolerance => dimension.tolerance || 0,
-            #:is_visible_in_list => dimension.is_visible_in_list || 1 , yet
-            :is_visible_in_list => 1 ,
+            :is_visible_in_list => dimension.is_visible_in_list || 0,
             :is_critical_dimension => dimension.is_critical_dimension || 1,
             :searchable => dimension.is_visible_in_list || 0,
             :filterable => dimension.is_visible_in_list || 0,
@@ -63,5 +62,13 @@ class AttributeConfigurer
       magento_attributes.push(process_row dimension)
     end
     magento_attributes.to_json
+  end
+
+  def run_single code
+    dimension = CritDim.where(idx_name: code).first
+    response = process_row dimension
+    response.to_json
+
+
   end
 end

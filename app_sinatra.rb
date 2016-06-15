@@ -37,6 +37,11 @@ get '/config/attributes/' do
   settings.configManager.get_critical_dimension_attributes
 end
 
+get '/config/attributes/:code' do
+  settings.configManager.get_critical_dimension_attribute params[:code]
+end
+
+
 get '/config/attributeSets/' do
   settings.configManager.get_attribute_sets
 end
