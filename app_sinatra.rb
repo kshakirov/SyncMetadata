@@ -50,10 +50,18 @@ get '/files/:filename' do |filename|
   send_file "public/#{filename}", :filename => filename, :type => 'Application/octet-stream'
 end
 
+
+get '/product/update/' do
+  settings.productSyncManager.update_products request
+end
+
 post '/product/update/specific' do
     ids = JSON.parse(request.body.read)
     settings.productSyncManager.update_products_by_ids ids
 end
+
+
+
 
 
 get '/sync/sales_notes/updates'  do

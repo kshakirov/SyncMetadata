@@ -4,6 +4,8 @@ class ExternalSystemsManagment
       get_last_image_update_id host_url
     elsif entity=='notes'
       get_last_sales_note_update_id host_url
+    elsif entity=='parts'
+      get_last_parts_update_id host_url
     end
   end
 
@@ -15,6 +17,11 @@ class ExternalSystemsManagment
   def get_last_sales_note_update_id host_url
     system = ExternalSystem.find_by url: host_url
     system.sales_notes_last
+  end
+
+  def get_last_parts_update_id host_url
+    system = ExternalSystem.find_by url: host_url
+    system.part_last
   end
 
   def set_last_image_update_id host_url, id
@@ -29,14 +36,24 @@ class ExternalSystemsManagment
     system.save
   end
 
+  def set_last_parts_update_id host_url, id
+    system = ExternalSystem.find_by url: host_url
+    system.part_last = id
+    system.save
+  end
 
-  def set_info host_url, entity
+
+  def set_info host_url, entity, id=nil
     if entity== 'images'
       image_audit_last_record = ProductsImagesAudit.last
       set_last_image_update_id host_url, image_audit_last_record.id
     elsif entity== 'notes'
       sales_notes_audit_last_record = SalesNotesAudit.last
       set_last_sales_notes_update_id host_url, sales_notes_audit_last_record.id
+    elsif entity== 'parts'
+      set_last_parts_update_id host_url, id
+
     end
+
   end
 end

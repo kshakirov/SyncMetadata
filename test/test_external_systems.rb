@@ -18,4 +18,9 @@ class TestExternalSystems < MiniTest::Unit::TestCase
     system.save
 
   end
+
+  def test_localhost_part
+    system = ExternalSystem.find_by url: '127.0.0.1'
+    refute_nil system.part_last
+  end
 end
