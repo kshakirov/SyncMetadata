@@ -1,6 +1,21 @@
+class EnumAttributeReader
+
+  def get_attribute value
+    begin
+      value = CritDimEnumVal.find value
+      value.val
+    rescue Exception => e
+      nil
+    end
+
+  end
+end
+
+
 class ProductCriticalAtttsReader
   def initialize
     @crit_dims = CritDim.all
+    $enum_attr_reader = EnumAttributeReader.new
   end
 
   def add_prefix_to_attribute_name part_type_name
@@ -18,16 +33,23 @@ class ProductCriticalAtttsReader
   end
 
 
-  def is_big_decimal_to_f value
+  def get_enum_value value
+    $enum_attr_reader.get_attribute value
+  end
+
+
+  def is_big_decimal_to_f value, type
     if value.class.to_s.include? 'BigDecimal'
       value.to_f
+    elsif type== 'ENUMERATION' and not value.nil?
+      get_enum_value value
     else
       value
     end
   end
 
-  def _put_explicit_zero value
-   is_big_decimal_to_f(value) || 0
+  def _put_explicit_zero value, type
+   is_big_decimal_to_f(value, type) || 0
   end
 
   def _get_values_from_table table_class_name, attrs, product_id, magento_set_name
@@ -36,7 +58,8 @@ class ProductCriticalAtttsReader
 
     attrs.each do |attr|
       key_name = attr.idx_name
-      attributes[key_name] = {'value' => _put_explicit_zero(product.send(attr.json_name)), 'type' => attr.data_type}
+      attributes[key_name] = {'value' => _put_explicit_zero(product.send(attr.json_name), attr.data_type),
+                              'type' => attr.data_type}
     end
     attributes
   end

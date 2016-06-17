@@ -110,6 +110,11 @@ class TestProductsAttrsReader < MiniTest::Unit::TestCase
 
   end
 
+  def test_enum_values
+    @reader = EnumAttributeReader.new
+    p @reader.get_attribute 20412
+  end
+
 
 
 end
