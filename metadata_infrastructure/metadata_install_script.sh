@@ -72,7 +72,12 @@ echo Installing packages
       sudo apt-get install libmysqlclient-dev
 
       sleep 10 # Elasticsearch can take a bit to start
-      bash /vagrant/bits/ElasticSearch/create_index.sh
+      sudo apt-get install python3-pip
+      sudo pip3 install elasticsearch
+      sudo apt-get install python3-mysql.connector
+
+      bash /vagrant/bits/ElasticSearch/delete_index.sh
+      /vagrant/bits/ElasticSearch/./create_index.py
 
       mysql -u root -e "CREATE DATABASE IF NOT EXISTS metadata;"
       mysql -u root -e "GRANT ALL PRIVILEGES ON metadata.* TO metaserver@'%' IDENTIFIED BY 'metaserver'; FLUSH PRIVILEGES;"
