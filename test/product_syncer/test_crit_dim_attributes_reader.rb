@@ -116,5 +116,11 @@ class TestProductsAttrsReader < MiniTest::Unit::TestCase
   end
 
 
+  def test_price
+    @reader = PriceAttributeReader.new
+    p @reader.get_attribute 49542
+  end
+
+
 
 end

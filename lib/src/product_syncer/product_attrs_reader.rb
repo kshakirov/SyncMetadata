@@ -373,6 +373,7 @@ class ProductAttrsReader
     @has_ti_chra_attr_reader = HasTiChra.new
     @part_type_analyzer = PartTypeAnalyzer.new
     @turbo_type_model_attr_reader = TurboModelAttributeReader.new
+    @price_attr_reader = PriceAttributeReader.new
   end
 
   def get_attribute_set set, product, part
@@ -436,6 +437,10 @@ class ProductAttrsReader
 
   end
 
+  def get_price id
+    @price_attr_reader.get_attribute id
+  end
+
   def run id
     part = Part.find(id)
     inserted_product = {}
@@ -448,6 +453,7 @@ class ProductAttrsReader
     inserted_product[:has_ti_interchange] = get_ti_interchange part.id
     inserted_product[:has_ti_chra] = get_ti_chra part.id
     inserted_product[:has_foreign_interchange] = get_foreign_interchange part.id
+    inserted_product[:group_price] = get_price part.id
 
     get_turbo_and_model_type part.id, inserted_product
     add_part_type_specific_attrs inserted_product, :where_used, get_where_used(part.id)
