@@ -81,9 +81,10 @@ echo Installing packages
 
       mysql -u root -e "CREATE DATABASE IF NOT EXISTS metadata;"
       mysql -u root -e "GRANT ALL PRIVILEGES ON metadata.* TO metaserver@'%' IDENTIFIED BY 'metaserver'; FLUSH PRIVILEGES;"
+      mysql -u root -e "GRANT ALL PRIVILEGES ON metadata.* TO vagrant@'%' IDENTIFIED BY 'vagrant'; FLUSH PRIVILEGES;"
       mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO root@'192.168.42.1'; FLUSH PRIVILEGES;"
 
-      bzcat /vagrant/metadata-201601211417.sql.bz2 | mysql -u metaserver -pmetaserver metadata
+      mysql -u metaserver -pmetaserver metadata < metadata.sql
       cd  /vagrant/metadata && mvn clean package -DskipTests -DbuildNumber=stage
       nohup java -jar /vagrant/metadata/target/metadata-stage.jar &
 

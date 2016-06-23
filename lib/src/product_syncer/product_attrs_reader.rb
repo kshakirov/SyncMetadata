@@ -432,8 +432,8 @@ class ProductAttrsReader
 
   def get_turbo_and_model_type part_id, inserted_product
     turbo_model, turbo_type = @turbo_type_model_attr_reader.get_attribute part_id
-    inserted_product[:turbo_model] = turbo_model
-    inserted_product[:turbo_type] = turbo_type
+    inserted_product['turbo_model'] = turbo_model
+    inserted_product['turbo_type'] = turbo_type
 
   end
 
@@ -444,24 +444,24 @@ class ProductAttrsReader
   def run id
     part = Part.find(id)
     inserted_product = {}
-    inserted_product[:sku] = part.id
-    inserted_product[:name] = part.name
-    inserted_product[:manufacturer] = part.manfr.name
-    inserted_product[:description] = part.description
-    inserted_product[:part_number] = part.manfr_part_num
-    inserted_product[:part_type] = part.part_type.magento_attribute_set
-    inserted_product[:has_ti_interchange] = get_ti_interchange part.id
-    inserted_product[:has_ti_chra] = get_ti_chra part.id
-    inserted_product[:has_foreign_interchange] = get_foreign_interchange part.id
-    inserted_product[:group_price] = get_price part.id
+    inserted_product['sku'] = part.id
+    inserted_product['name'] = part.name
+    inserted_product['manufacturer'] = part.manfr.name
+    inserted_product['description'] = part.description
+    inserted_product['part_number'] = part.manfr_part_num
+    inserted_product['part_type'] = part.part_type.magento_attribute_set
+    inserted_product['has_ti_interchange'] = get_ti_interchange part.id
+    inserted_product['has_ti_chra'] = get_ti_chra part.id
+    inserted_product['has_foreign_interchange'] = get_foreign_interchange part.id
+    #inserted_product['group_price'] = get_price part.id
 
     get_turbo_and_model_type part.id, inserted_product
-    add_part_type_specific_attrs inserted_product, :where_used, get_where_used(part.id)
-    add_part_type_specific_attrs inserted_product, :service_kits, get_service_kits(part.id)
-    add_part_type_specific_attrs inserted_product, :interchanges, get_interchanges(part.id)
-    add_part_type_specific_attrs inserted_product, :bill_of_materials, get_bom(part.id)
-    add_part_type_specific_attrs inserted_product, :application_detail, get_applications(part.id)
-    inserted_product[:custom_attrs] = @crit_dim_attr_reader.get_crit_dim_attributes(part.part_type.id, id) if @part_type_analyzer.is_crit_dim_part_type(part.part_type.id)
+    add_part_type_specific_attrs inserted_product, 'where_used', get_where_used(part.id)
+    add_part_type_specific_attrs inserted_product, 'service_kits', get_service_kits(part.id)
+    add_part_type_specific_attrs inserted_product, 'interchanges', get_interchanges(part.id)
+    add_part_type_specific_attrs inserted_product, 'bill_of_materials', get_bom(part.id)
+    add_part_type_specific_attrs inserted_product, 'application_detail', get_applications(part.id)
+    inserted_product['custom_attrs'] = @crit_dim_attr_reader.get_crit_dim_attributes(part.part_type.id, id) if @part_type_analyzer.is_crit_dim_part_type(part.part_type.id)
 
     inserted_product
   end

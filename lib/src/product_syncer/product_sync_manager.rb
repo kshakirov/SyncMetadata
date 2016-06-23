@@ -58,7 +58,9 @@ class ProductSyncManager
     audit_records = _get_part_audit_records last_id
     last_audit_id = 0
     audit_records.each do |record|
-      updated_products.push(@prod_attr_reader.run(record.part_id))
+      update = @prod_attr_reader.run(record.part_id)
+      update['action'] = record.action
+      updated_products.push(update)
       last_audit_id = record.id
     end
     @external_systems.set_info remote_host_addr, 'parts', last_audit_id
