@@ -49,6 +49,10 @@ class AttributeConfigurer
             :filterable => dimension.is_visible_in_list || 0,
             :comparable => dimension.is_visible_in_list || 0,
             :is_filterable_in_search => dimension.is_visible_in_list || 0,
+            :scale => dimension.scale,
+            :length => dimension.length,
+            :parent_id => dimension.parent_id,
+            :unit => dimension.unit
         }
 
     }
