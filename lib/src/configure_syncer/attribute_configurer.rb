@@ -33,6 +33,17 @@ class AttributeConfigurer
     end
     options
   end
+
+  def get_parent_name_by_parent_id parent_id
+    if not parent_id.nil?
+      parent = CritDim.where(id: parent_id)
+      parent[0].idx_name if parent and parent.size > 0
+    else
+      nil
+    end
+  end
+
+
   def process_row dimension
     part_type_name = dimension.part_type.magento_attribute_set
     options = {
@@ -51,7 +62,7 @@ class AttributeConfigurer
             :is_filterable_in_search => dimension.is_visible_in_list || 0,
             :scale => dimension.scale,
             :length => dimension.length,
-            :parent_id => dimension.parent_id,
+            :parent_id => get_parent_name_by_parent_id(dimension.parent_id),
             :unit => dimension.unit
         }
 
