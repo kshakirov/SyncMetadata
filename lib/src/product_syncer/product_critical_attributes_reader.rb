@@ -49,7 +49,7 @@ class ProductCriticalAtttsReader
   end
 
   def _put_explicit_zero value, type
-   is_big_decimal_to_f(value, type) || 0
+   is_big_decimal_to_f(value, type)
   end
 
   def _get_values_from_table table_class_name, attrs, product_id, magento_set_name
