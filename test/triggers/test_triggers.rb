@@ -9,7 +9,10 @@ class TestBearingSpacer < Minitest::Unit::TestCase
 
 
       <%types.each do |type|%>
-      execute <<-SQL
+       execute <<-SQL
+          DROP TRIGGER  IF EXISTS `<%= type[:trigger_name]%>`
+        SQL
+        execute <<-SQL
         CREATE TRIGGER `<%= type[:trigger_name]%>` AFTER UPDATE ON `<%= type[:table_name]%>`
         FOR EACH ROW BEGIN
           INSERT INTO part_audits Set action = 'update', part_id = NEW.part_id, created_at = NOW(), updated_at= NOW();
