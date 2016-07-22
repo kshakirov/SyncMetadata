@@ -45,12 +45,6 @@ class CreateCriticalDimsTriggers < ActiveRecord::Migration
         END;
     SQL
 
-    execute <<-SQL
-        CREATE TRIGGER `heatshield_shroud_update_trigger` AFTER UPDATE ON `heatshield_shroud`
-        FOR EACH ROW BEGIN
-          INSERT INTO part_audits Set action = 'update', part_id = NEW.part_id, created_at = NOW(), updated_at= NOW();
-        END;
-    SQL
 
     execute <<-SQL
         CREATE TRIGGER `nozzle_ring_update_trigger` AFTER UPDATE ON `nozzle_ring`
@@ -194,9 +188,6 @@ class CreateCriticalDimsTriggers < ActiveRecord::Migration
           DROP TRIGGER `bearing_housing_update_trigger`
     SQL
 
-    execute <<-SQL
-          DROP TRIGGER `heatshield_shroud_update_trigger`
-    SQL
 
     execute <<-SQL
           DROP TRIGGER `nozzle_ring_update_trigger`
