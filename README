@@ -7,3 +7,12 @@
    FOR EACH ROW BEGIN
       INSERT INTO sales_notes_audit Set action = 'insert', part_id = NEW.id;
    END;
+
+
+
+
+Installation on new purged database
+
+1. bundle exec rake db:migrate
+2. to set tolerance attributes
+3. to set catalog visible attributes

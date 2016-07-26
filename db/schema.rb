@@ -65,7 +65,11 @@ ActiveRecord::Schema.define(version: 20160616111447) do
     t.integer "diagram",                   limit: 4
   end
 
+  add_index "backplate", ["dynCs"], name: "dynCs", using: :btree
+  add_index "backplate", ["matL"], name: "matL", using: :btree
+  add_index "backplate", ["mountingHoleThreadCallout"], name: "mountingHoleThreadCallout", using: :btree
   add_index "backplate", ["part_id"], name: "part_id", using: :btree
+  add_index "backplate", ["superbackFlatback"], name: "superbackFlatback", using: :btree
 
   create_table "backplate_sealplate", id: false, force: :cascade do |t|
     t.integer "part_id", limit: 8, null: false
@@ -153,7 +157,17 @@ ActiveRecord::Schema.define(version: 20160616111447) do
     t.integer "diagram",                limit: 4
   end
 
+  add_index "bolt_screw", ["driveSize"], name: "driveSize", using: :btree
+  add_index "bolt_screw", ["driveType"], name: "driveType", using: :btree
+  add_index "bolt_screw", ["headType"], name: "headType", using: :btree
   add_index "bolt_screw", ["part_id"], name: "part_id", using: :btree
+  add_index "bolt_screw", ["platingCoating"], name: "platingCoating", using: :btree
+  add_index "bolt_screw", ["prevailingTorqueYn"], name: "prevailingTorqueYn", using: :btree
+  add_index "bolt_screw", ["propertyClassOrGrade"], name: "propertyClassOrGrade", using: :btree
+  add_index "bolt_screw", ["specialFeaturesOnOff"], name: "specialFeaturesOnOff", using: :btree
+  add_index "bolt_screw", ["threadCalloutA"], name: "threadCalloutA", using: :btree
+  add_index "bolt_screw", ["threadHand"], name: "threadHand", using: :btree
+  add_index "bolt_screw", ["threadLockCompoundType"], name: "threadLockCompoundType", using: :btree
 
   create_table "bom", force: :cascade do |t|
     t.integer "parent_part_id", limit: 8, null: false
@@ -256,6 +270,7 @@ ActiveRecord::Schema.define(version: 20160616111447) do
     t.decimal "diameterD",                  precision: 6, scale: 3
   end
 
+  add_index "carbon_seal", ["encapsulated"], name: "encapsulated", using: :btree
   add_index "carbon_seal", ["part_id"], name: "part_id", using: :btree
 
   create_table "cartridge", id: false, force: :cascade do |t|
@@ -288,7 +303,10 @@ ActiveRecord::Schema.define(version: 20160616111447) do
     t.integer "diagram",          limit: 4
   end
 
+  add_index "clamp", ["material"], name: "material", using: :btree
   add_index "clamp", ["part_id"], name: "part_id", using: :btree
+  add_index "clamp", ["platingCoating"], name: "platingCoating", using: :btree
+  add_index "clamp", ["type"], name: "type", using: :btree
 
   create_table "compressor_cover", id: false, force: :cascade do |t|
     t.integer "part_id", limit: 8, null: false
@@ -339,13 +357,20 @@ ActiveRecord::Schema.define(version: 20160616111447) do
   add_index "compressor_wheel", ["threadHand"], name: "threadHand", using: :btree
   add_index "compressor_wheel", ["threadedBore"], name: "threadedBore", using: :btree
 
+  create_table "cool_type", force: :cascade do |t|
+    t.string  "name",      limit: 255, null: false
+    t.integer "import_pk", limit: 8
+  end
+
+  add_index "cool_type", ["name"], name: "name", unique: true, using: :btree
+
   create_table "crit_dim", force: :cascade do |t|
     t.integer "part_type_id",          limit: 8,                                        null: false
     t.integer "seq_num",               limit: 4,                                        null: false
     t.string  "data_type",             limit: 11,                                       null: false
     t.integer "enum_id",               limit: 4
     t.string  "unit",                  limit: 7
-    t.boolean "tolerance"
+    t.string  "tolerance",             limit: 5
     t.string  "name",                  limit: 255,                                      null: false
     t.string  "json_name",             limit: 48,                                       null: false
     t.string  "idx_name",              limit: 30,                                       null: false
@@ -357,6 +382,8 @@ ActiveRecord::Schema.define(version: 20160616111447) do
     t.integer "parent_id",             limit: 8
     t.integer "length",                limit: 1
     t.integer "scale",                 limit: 1
+    t.integer "length_web",            limit: 1
+    t.integer "scale_web",             limit: 1
     t.integer "is_visible_in_list",    limit: 4,                            default: 0
     t.integer "is_critical_dimension", limit: 4,                            default: 1
   end
@@ -413,6 +440,7 @@ ActiveRecord::Schema.define(version: 20160616111447) do
   end
 
   add_index "fitting", ["part_id"], name: "part_id", using: :btree
+  add_index "fitting", ["thread"], name: "thread", using: :btree
 
   create_table "gasket", id: false, force: :cascade do |t|
     t.integer "part_id",            limit: 8,                            null: false
@@ -453,7 +481,7 @@ ActiveRecord::Schema.define(version: 20160616111447) do
 
   add_index "groups", ["name"], name: "name", unique: true, using: :btree
 
-  create_table "heatshield_shroud", id: false, force: :cascade do |t|
+  create_table "heatshield", id: false, force: :cascade do |t|
     t.integer "part_id",         limit: 8,                            null: false
     t.decimal "diaA",                         precision: 6, scale: 3
     t.decimal "diaATol",                      precision: 6, scale: 3
@@ -478,9 +506,9 @@ ActiveRecord::Schema.define(version: 20160616111447) do
     t.decimal "thickness",                    precision: 6, scale: 3
   end
 
-  add_index "heatshield_shroud", ["matL"], name: "matL", using: :btree
-  add_index "heatshield_shroud", ["part_id"], name: "part_id", using: :btree
-  add_index "heatshield_shroud", ["rolledLip"], name: "rolledLip", using: :btree
+  add_index "heatshield", ["matL"], name: "matL", using: :btree
+  add_index "heatshield", ["part_id"], name: "part_id", using: :btree
+  add_index "heatshield", ["rolledLip"], name: "rolledLip", using: :btree
 
   create_table "i_interchange_log", force: :cascade do |t|
     t.string   "description",           limit: 250
@@ -557,12 +585,16 @@ ActiveRecord::Schema.define(version: 20160616111447) do
     t.integer "diagram",            limit: 4
   end
 
+  add_index "journal_bearing_spacer", ["outerConfiguration"], name: "outerConfiguration", using: :btree
   add_index "journal_bearing_spacer", ["part_id"], name: "part_id", using: :btree
+  add_index "journal_bearing_spacer", ["pressedFloating"], name: "pressedFloating", using: :btree
 
   create_table "kit", id: false, force: :cascade do |t|
-    t.integer "part_id", limit: 8, null: false
+    t.integer "part_id",     limit: 8, null: false
+    t.integer "kit_type_id", limit: 8, null: false
   end
 
+  add_index "kit", ["kit_type_id"], name: "kit_type_id", using: :btree
   add_index "kit", ["part_id"], name: "part_id", using: :btree
 
   create_table "kit_part_common_component", force: :cascade do |t|
@@ -573,6 +605,11 @@ ActiveRecord::Schema.define(version: 20160616111447) do
 
   add_index "kit_part_common_component", ["kit_id", "part_id"], name: "kit_id", unique: true, using: :btree
   add_index "kit_part_common_component", ["part_id"], name: "part_id", using: :btree
+
+  create_table "kit_type", force: :cascade do |t|
+    t.string  "name",      limit: 1000, null: false
+    t.integer "import_pk", limit: 8
+  end
 
   create_table "major_component", id: false, force: :cascade do |t|
     t.integer "part_id", limit: 8, null: false
@@ -671,7 +708,17 @@ ActiveRecord::Schema.define(version: 20160616111447) do
     t.decimal "acrossFlats",                       precision: 6, scale: 3
   end
 
+  add_index "nut", ["driveType"], name: "driveType", using: :btree
+  add_index "nut", ["flange"], name: "flange", using: :btree
+  add_index "nut", ["grade"], name: "grade", using: :btree
   add_index "nut", ["part_id"], name: "part_id", using: :btree
+  add_index "nut", ["platingCoating"], name: "platingCoating", using: :btree
+  add_index "nut", ["prevailingTorqueType"], name: "prevailingTorqueType", using: :btree
+  add_index "nut", ["shaftNut"], name: "shaftNut", using: :btree
+  add_index "nut", ["showSpecialFeatures"], name: "showSpecialFeatures", using: :btree
+  add_index "nut", ["thdHand"], name: "thdHand", using: :btree
+  add_index "nut", ["thread"], name: "thread", using: :btree
+  add_index "nut", ["type"], name: "type", using: :btree
 
   create_table "o_ring", id: false, force: :cascade do |t|
     t.integer "part_id",                limit: 8,                            null: false
@@ -691,7 +738,11 @@ ActiveRecord::Schema.define(version: 20160616111447) do
     t.decimal "weight",                              precision: 6, scale: 1
   end
 
+  add_index "o_ring", ["crossSectionType"], name: "crossSectionType", using: :btree
+  add_index "o_ring", ["dashNo"], name: "dashNo", using: :btree
+  add_index "o_ring", ["matL"], name: "matL", using: :btree
   add_index "o_ring", ["part_id"], name: "part_id", using: :btree
+  add_index "o_ring", ["showSpecialFeatures"], name: "showSpecialFeatures", using: :btree
 
   create_table "oil_deflector", id: false, force: :cascade do |t|
     t.integer "part_id",          limit: 8,                         null: false
@@ -706,7 +757,9 @@ ActiveRecord::Schema.define(version: 20160616111447) do
     t.integer "diagram",          limit: 4
   end
 
+  add_index "oil_deflector", ["material"], name: "material", using: :btree
   add_index "oil_deflector", ["part_id"], name: "part_id", using: :btree
+  add_index "oil_deflector", ["platingCoating"], name: "platingCoating", using: :btree
 
   create_table "part", force: :cascade do |t|
     t.string  "manfr_part_num",      limit: 255,                 null: false
@@ -731,6 +784,14 @@ ActiveRecord::Schema.define(version: 20160616111447) do
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
   end
+
+  create_table "part_turbo", force: :cascade do |t|
+    t.integer "part_id",  limit: 8, null: false
+    t.integer "turbo_id", limit: 8, null: false
+  end
+
+  add_index "part_turbo", ["part_id"], name: "part_id", using: :btree
+  add_index "part_turbo", ["turbo_id"], name: "turbo_id", using: :btree
 
   create_table "part_turbo_type", id: false, force: :cascade do |t|
     t.integer "part_id",       limit: 8, null: false
@@ -761,6 +822,8 @@ ActiveRecord::Schema.define(version: 20160616111447) do
     t.integer "diagram",           limit: 4
   end
 
+  add_index "pin", ["location"], name: "location", using: :btree
+  add_index "pin", ["material"], name: "material", using: :btree
   add_index "pin", ["part_id"], name: "part_id", using: :btree
 
   create_table "piston_ring", id: false, force: :cascade do |t|
@@ -835,7 +898,16 @@ ActiveRecord::Schema.define(version: 20160616111447) do
     t.integer "diagram",                  limit: 4
   end
 
+  add_index "retaining_ring", ["axiallyRadiallyAssembled"], name: "axiallyRadiallyAssembled", using: :btree
+  add_index "retaining_ring", ["beveled"], name: "beveled", using: :btree
+  add_index "retaining_ring", ["bowed"], name: "bowed", using: :btree
+  add_index "retaining_ring", ["finishPlating"], name: "finishPlating", using: :btree
+  add_index "retaining_ring", ["internalExternal"], name: "internalExternal", using: :btree
+  add_index "retaining_ring", ["material"], name: "material", using: :btree
   add_index "retaining_ring", ["part_id"], name: "part_id", using: :btree
+  add_index "retaining_ring", ["ringType"], name: "ringType", using: :btree
+  add_index "retaining_ring", ["selfLocking"], name: "selfLocking", using: :btree
+  add_index "retaining_ring", ["taperedConstantSection"], name: "taperedConstantSection", using: :btree
 
   create_table "role", force: :cascade do |t|
     t.string "name",    limit: 100, null: false
@@ -930,7 +1002,10 @@ ActiveRecord::Schema.define(version: 20160616111447) do
     t.integer "diagram",                  limit: 4
   end
 
+  add_index "seal_plate", ["dynamicCarbonSeal"], name: "dynamicCarbonSeal", using: :btree
+  add_index "seal_plate", ["matL"], name: "matL", using: :btree
   add_index "seal_plate", ["part_id"], name: "part_id", using: :btree
+  add_index "seal_plate", ["superbackFlatbackSpecial"], name: "superbackFlatbackSpecial", using: :btree
 
   create_table "spring", id: false, force: :cascade do |t|
     t.integer "part_id",       limit: 8,                         null: false
@@ -941,7 +1016,9 @@ ActiveRecord::Schema.define(version: 20160616111447) do
     t.integer "diagram",       limit: 4
   end
 
+  add_index "spring", ["material"], name: "material", using: :btree
   add_index "spring", ["part_id"], name: "part_id", using: :btree
+  add_index "spring", ["type"], name: "type", using: :btree
 
   create_table "standard_bearing_spacer", id: false, force: :cascade do |t|
     t.integer "standard_part_id",  limit: 8, null: false
@@ -1014,7 +1091,9 @@ ActiveRecord::Schema.define(version: 20160616111447) do
     t.integer "diagram",            limit: 4
   end
 
+  add_index "thrust_bearing", ["material"], name: "material", using: :btree
   add_index "thrust_bearing", ["part_id"], name: "part_id", using: :btree
+  add_index "thrust_bearing", ["rotation"], name: "rotation", using: :btree
 
   create_table "thrust_collar", id: false, force: :cascade do |t|
     t.integer "part_id",                       limit: 8,                         null: false
@@ -1051,6 +1130,7 @@ ActiveRecord::Schema.define(version: 20160616111447) do
     t.integer "diagram",                       limit: 4
   end
 
+  add_index "thrust_collar", ["material"], name: "material", using: :btree
   add_index "thrust_collar", ["part_id"], name: "part_id", using: :btree
 
   create_table "thrust_part", id: false, force: :cascade do |t|
@@ -1090,6 +1170,7 @@ ActiveRecord::Schema.define(version: 20160616111447) do
     t.integer "diagram",                       limit: 4
   end
 
+  add_index "thrust_spacer", ["material"], name: "material", using: :btree
   add_index "thrust_spacer", ["part_id"], name: "part_id", using: :btree
 
   create_table "thrust_washer", id: false, force: :cascade do |t|
@@ -1104,6 +1185,7 @@ ActiveRecord::Schema.define(version: 20160616111447) do
     t.decimal "weight",                 precision: 6, scale: 1
   end
 
+  add_index "thrust_washer", ["material"], name: "material", using: :btree
   add_index "thrust_washer", ["part_id"], name: "part_id", using: :btree
 
   create_table "turbine_housing", id: false, force: :cascade do |t|
@@ -1163,8 +1245,10 @@ ActiveRecord::Schema.define(version: 20160616111447) do
   create_table "turbo", id: false, force: :cascade do |t|
     t.integer "part_id",        limit: 8, null: false
     t.integer "turbo_model_id", limit: 8, null: false
+    t.integer "cool_type_id",   limit: 8
   end
 
+  add_index "turbo", ["cool_type_id"], name: "cool_type_id", using: :btree
   add_index "turbo", ["part_id"], name: "part_id", using: :btree
   add_index "turbo", ["turbo_model_id"], name: "turbo_model_id", using: :btree
 
@@ -1386,9 +1470,18 @@ ActiveRecord::Schema.define(version: 20160616111447) do
     t.integer "diagram",        limit: 4
   end
 
+  add_index "washer", ["material"], name: "material", using: :btree
   add_index "washer", ["part_id"], name: "part_id", using: :btree
+  add_index "washer", ["platingCoating"], name: "platingCoating", using: :btree
+  add_index "washer", ["type"], name: "type", using: :btree
 
+  add_foreign_key "actuator", "part", name: "actuator_ibfk_1"
   add_foreign_key "auth_provider_ldap", "auth_provider", column: "id", name: "auth_provider_ldap_ibfk_1", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "backplate", "crit_dim_enum_val", column: "dynCs", name: "backplate_ibfk_2", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "backplate", "crit_dim_enum_val", column: "matL", name: "backplate_ibfk_5", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "backplate", "crit_dim_enum_val", column: "mountingHoleThreadCallout", name: "backplate_ibfk_4", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "backplate", "crit_dim_enum_val", column: "superbackFlatback", name: "backplate_ibfk_3", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "backplate", "part", name: "backplate_ibfk_1"
   add_foreign_key "backplate_sealplate", "part", name: "backplate_sealplate_ibfk_1"
   add_foreign_key "bearing_housing", "crit_dim_enum_val", column: "coolantPortThread1", name: "bearing_housing_ibfk_7", on_update: :cascade, on_delete: :nullify
   add_foreign_key "bearing_housing", "crit_dim_enum_val", column: "coolantPortThread2", name: "bearing_housing_ibfk_8", on_update: :cascade, on_delete: :nullify
@@ -1402,6 +1495,17 @@ ActiveRecord::Schema.define(version: 20160616111447) do
   add_foreign_key "bearing_housing", "crit_dim_enum_val", column: "waterCooled", name: "bearing_housing_ibfk_2", on_update: :cascade, on_delete: :nullify
   add_foreign_key "bearing_housing", "part", name: "bearing_housing_ibfk_1"
   add_foreign_key "bearing_spacer", "part", name: "bearing_spacer_ibfk_1"
+  add_foreign_key "bolt_screw", "crit_dim_enum_val", column: "driveSize", name: "bolt_screw_ibfk_6", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "bolt_screw", "crit_dim_enum_val", column: "driveType", name: "bolt_screw_ibfk_5", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "bolt_screw", "crit_dim_enum_val", column: "headType", name: "bolt_screw_ibfk_4", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "bolt_screw", "crit_dim_enum_val", column: "platingCoating", name: "bolt_screw_ibfk_9", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "bolt_screw", "crit_dim_enum_val", column: "prevailingTorqueYn", name: "bolt_screw_ibfk_7", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "bolt_screw", "crit_dim_enum_val", column: "propertyClassOrGrade", name: "bolt_screw_ibfk_10", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "bolt_screw", "crit_dim_enum_val", column: "specialFeaturesOnOff", name: "bolt_screw_ibfk_11", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "bolt_screw", "crit_dim_enum_val", column: "threadCalloutA", name: "bolt_screw_ibfk_2", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "bolt_screw", "crit_dim_enum_val", column: "threadHand", name: "bolt_screw_ibfk_3", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "bolt_screw", "crit_dim_enum_val", column: "threadLockCompoundType", name: "bolt_screw_ibfk_8", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "bolt_screw", "part", name: "bolt_screw_ibfk_1"
   add_foreign_key "bom", "part", column: "child_part_id", name: "bom_ibfk_2"
   add_foreign_key "bom", "part", column: "parent_part_id", name: "bom_ibfk_1"
   add_foreign_key "bom_alt_item", "bom", name: "bom_alt_item_ibfk_2"
@@ -1414,8 +1518,15 @@ ActiveRecord::Schema.define(version: 20160616111447) do
   add_foreign_key "car_model_engine_year", "car_engine", name: "car_model_engine_year_ibfk_2"
   add_foreign_key "car_model_engine_year", "car_model", name: "car_model_engine_year_ibfk_1"
   add_foreign_key "car_model_engine_year", "car_year", name: "car_model_engine_year_ibfk_3"
+  add_foreign_key "carbon_seal", "crit_dim_enum_val", column: "encapsulated", name: "carbon_seal_ibfk_2", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "carbon_seal", "part", name: "carbon_seal_ibfk_1"
   add_foreign_key "cartridge", "part", name: "cartridge_ibfk_1"
   add_foreign_key "changelog", "user", name: "changelog_ibfk_1"
+  add_foreign_key "clamp", "crit_dim_enum_val", column: "material", name: "clamp_ibfk_3", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "clamp", "crit_dim_enum_val", column: "platingCoating", name: "clamp_ibfk_4", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "clamp", "crit_dim_enum_val", column: "type", name: "clamp_ibfk_2", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "clamp", "part", name: "clamp_ibfk_1"
+  add_foreign_key "compressor_cover", "part", name: "compressor_cover_ibfk_1"
   add_foreign_key "compressor_wheel", "crit_dim_enum_val", column: "boreless", name: "compressor_wheel_ibfk_6", on_update: :cascade, on_delete: :nullify
   add_foreign_key "compressor_wheel", "crit_dim_enum_val", column: "extendedTips", name: "compressor_wheel_ibfk_4", on_update: :cascade, on_delete: :nullify
   add_foreign_key "compressor_wheel", "crit_dim_enum_val", column: "flatbackSuperback", name: "compressor_wheel_ibfk_3", on_update: :cascade, on_delete: :nullify
@@ -1427,15 +1538,18 @@ ActiveRecord::Schema.define(version: 20160616111447) do
   add_foreign_key "crit_dim", "crit_dim", column: "parent_id", name: "crit_dim_ibfk_3", on_update: :cascade, on_delete: :nullify
   add_foreign_key "crit_dim", "crit_dim_enum", column: "enum_id", name: "crit_dim_ibfk_2", on_update: :cascade, on_delete: :nullify
   add_foreign_key "crit_dim", "part_type", name: "crit_dim_ibfk_1"
+  add_foreign_key "fast_wearing_component", "part", name: "fast_wearing_component_ibfk_1"
+  add_foreign_key "fitting", "crit_dim_enum_val", column: "thread", name: "fitting_ibfk_2", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "fitting", "part", name: "fitting_ibfk_1"
   add_foreign_key "gasket", "crit_dim_enum_val", column: "material", name: "gasket_ibfk_4", on_update: :cascade, on_delete: :nullify
   add_foreign_key "gasket", "crit_dim_enum_val", column: "splitSinglePassage", name: "gasket_ibfk_3", on_update: :cascade, on_delete: :nullify
   add_foreign_key "gasket", "crit_dim_enum_val", column: "type", name: "gasket_ibfk_2", on_update: :cascade, on_delete: :nullify
   add_foreign_key "gasket", "part", name: "gasket_ibfk_1"
   add_foreign_key "group_role", "groups", name: "group_role_ibfk_1"
   add_foreign_key "group_role", "role", name: "group_role_ibfk_2"
-  add_foreign_key "heatshield_shroud", "crit_dim_enum_val", column: "matL", name: "heatshield_shroud_ibfk_2", on_update: :cascade, on_delete: :nullify
-  add_foreign_key "heatshield_shroud", "crit_dim_enum_val", column: "rolledLip", name: "heatshield_shroud_ibfk_3", on_update: :cascade, on_delete: :nullify
-  add_foreign_key "heatshield_shroud", "part", name: "heatshield_shroud_ibfk_1"
+  add_foreign_key "heatshield", "crit_dim_enum_val", column: "matL", name: "heatshield_ibfk_2", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "heatshield", "crit_dim_enum_val", column: "rolledLip", name: "heatshield_ibfk_3", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "heatshield", "part", name: "heatshield_ibfk_1"
   add_foreign_key "interchange_header", "part", column: "new_part_id", name: "new_part_id"
   add_foreign_key "interchange_item", "interchange_header", name: "interchange_item_ibfk_1"
   add_foreign_key "interchange_item", "part", name: "interchange_item_ibfk_2"
@@ -1448,23 +1562,65 @@ ActiveRecord::Schema.define(version: 20160616111447) do
   add_foreign_key "journal_bearing", "crit_dim_enum_val", column: "size", name: "journal_bearing_ibfk_2", on_update: :cascade, on_delete: :nullify
   add_foreign_key "journal_bearing", "crit_dim_enum_val", column: "specialFeaturesOnOff", name: "journal_bearing_ibfk_9", on_update: :cascade, on_delete: :nullify
   add_foreign_key "journal_bearing", "part", name: "journal_bearing_ibfk_1"
+  add_foreign_key "journal_bearing_spacer", "crit_dim_enum_val", column: "outerConfiguration", name: "journal_bearing_spacer_ibfk_2", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "journal_bearing_spacer", "crit_dim_enum_val", column: "pressedFloating", name: "journal_bearing_spacer_ibfk_3", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "journal_bearing_spacer", "part", name: "journal_bearing_spacer_ibfk_1"
+  add_foreign_key "kit", "kit_type", name: "kit_ibfk_1"
   add_foreign_key "kit", "part", name: "kit_ibfk_2"
   add_foreign_key "kit_part_common_component", "part", column: "kit_id", name: "kit_part_common_component_ibfk_1"
   add_foreign_key "kit_part_common_component", "part", name: "kit_part_common_component_ibfk_2"
+  add_foreign_key "major_component", "part", name: "major_component_ibfk_1"
   add_foreign_key "manfr", "manfr", column: "parent_manfr_id", name: "manfr_ibfk_2"
   add_foreign_key "manfr", "manfr_type", name: "manfr_ibfk_1"
   add_foreign_key "mas90sync", "user", name: "usrid_fk"
+  add_foreign_key "minor_component", "part", name: "minor_component_ibfk_1"
+  add_foreign_key "misc_minor_component", "part", name: "misc_minor_component_ibfk_1"
   add_foreign_key "nozzle_ring", "crit_dim_enum_val", column: "rotation", name: "nozzle_ring_ibfk_2", on_update: :cascade, on_delete: :nullify
   add_foreign_key "nozzle_ring", "part", name: "nozzle_ring_ibfk_1"
+  add_foreign_key "nut", "crit_dim_enum_val", column: "driveType", name: "nut_ibfk_5", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "nut", "crit_dim_enum_val", column: "flange", name: "nut_ibfk_4", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "nut", "crit_dim_enum_val", column: "grade", name: "nut_ibfk_8", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "nut", "crit_dim_enum_val", column: "platingCoating", name: "nut_ibfk_9", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "nut", "crit_dim_enum_val", column: "prevailingTorqueType", name: "nut_ibfk_11", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "nut", "crit_dim_enum_val", column: "shaftNut", name: "nut_ibfk_2", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "nut", "crit_dim_enum_val", column: "showSpecialFeatures", name: "nut_ibfk_10", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "nut", "crit_dim_enum_val", column: "thdHand", name: "nut_ibfk_7", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "nut", "crit_dim_enum_val", column: "thread", name: "nut_ibfk_6", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "nut", "crit_dim_enum_val", column: "type", name: "nut_ibfk_3", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "nut", "part", name: "nut_ibfk_1"
+  add_foreign_key "o_ring", "crit_dim_enum_val", column: "crossSectionType", name: "o_ring_ibfk_2", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "o_ring", "crit_dim_enum_val", column: "dashNo", name: "o_ring_ibfk_4", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "o_ring", "crit_dim_enum_val", column: "matL", name: "o_ring_ibfk_3", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "o_ring", "crit_dim_enum_val", column: "showSpecialFeatures", name: "o_ring_ibfk_5", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "o_ring", "part", name: "o_ring_ibfk_1"
+  add_foreign_key "oil_deflector", "crit_dim_enum_val", column: "material", name: "oil_deflector_ibfk_2", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "oil_deflector", "crit_dim_enum_val", column: "platingCoating", name: "oil_deflector_ibfk_3", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "oil_deflector", "part", name: "oil_deflector_ibfk_1"
   add_foreign_key "part", "manfr", name: "part_ibfk_1"
   add_foreign_key "part", "part_type", name: "part_ibfk_2"
+  add_foreign_key "part_turbo", "part", name: "part_turbo_ibfk_1"
+  add_foreign_key "part_turbo", "turbo", primary_key: "part_id", name: "part_turbo_ibfk_2"
   add_foreign_key "part_turbo_type", "part", name: "part_turbo_type_ibfk_1"
   add_foreign_key "part_turbo_type", "turbo_type", name: "part_turbo_type_ibfk_2"
   add_foreign_key "part_type", "part_type", column: "parent_part_type_id", name: "part_type_ibfk_1"
+  add_foreign_key "pin", "crit_dim_enum_val", column: "location", name: "pin_ibfk_2", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "pin", "crit_dim_enum_val", column: "material", name: "pin_ibfk_3", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "pin", "part", name: "pin_ibfk_1"
   add_foreign_key "piston_ring", "crit_dim_enum_val", column: "material", name: "piston_ring_ibfk_2", on_update: :cascade, on_delete: :nullify
   add_foreign_key "piston_ring", "crit_dim_enum_val", column: "type", name: "piston_ring_ibfk_3", on_update: :cascade, on_delete: :nullify
   add_foreign_key "piston_ring", "part", name: "piston_ring_ibfk_1"
+  add_foreign_key "plug", "part", name: "plug_ibfk_1"
   add_foreign_key "product_image", "part", name: "product_image_ibfk_1"
+  add_foreign_key "retaining_ring", "crit_dim_enum_val", column: "axiallyRadiallyAssembled", name: "retaining_ring_ibfk_5", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "retaining_ring", "crit_dim_enum_val", column: "beveled", name: "retaining_ring_ibfk_7", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "retaining_ring", "crit_dim_enum_val", column: "bowed", name: "retaining_ring_ibfk_8", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "retaining_ring", "crit_dim_enum_val", column: "finishPlating", name: "retaining_ring_ibfk_10", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "retaining_ring", "crit_dim_enum_val", column: "internalExternal", name: "retaining_ring_ibfk_2", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "retaining_ring", "crit_dim_enum_val", column: "material", name: "retaining_ring_ibfk_9", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "retaining_ring", "crit_dim_enum_val", column: "ringType", name: "retaining_ring_ibfk_3", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "retaining_ring", "crit_dim_enum_val", column: "selfLocking", name: "retaining_ring_ibfk_6", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "retaining_ring", "crit_dim_enum_val", column: "taperedConstantSection", name: "retaining_ring_ibfk_4", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "retaining_ring", "part", name: "retaining_ring_ibfk_1"
   add_foreign_key "sales_note", "user", column: "create_uid", name: "fk_sales_note_user_create_uid"
   add_foreign_key "sales_note", "user", column: "write_uid", name: "fk_sales_note_user_write_uid"
   add_foreign_key "sales_note_attachment", "sales_note", name: "sales_note_attachment_sales_note_sales_note_id"
@@ -1474,12 +1630,30 @@ ActiveRecord::Schema.define(version: 20160616111447) do
   add_foreign_key "sales_note_part", "sales_note", name: "sales_note_part_sales_note_sales_note_id", on_delete: :cascade
   add_foreign_key "sales_note_part", "user", column: "create_uid", name: "sales_note_part_user_create_uid"
   add_foreign_key "sales_note_part", "user", column: "write_uid", name: "sales_note_part_user_write_uid"
+  add_foreign_key "seal_plate", "crit_dim_enum_val", column: "dynamicCarbonSeal", name: "seal_plate_ibfk_3", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "seal_plate", "crit_dim_enum_val", column: "matL", name: "seal_plate_ibfk_4", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "seal_plate", "crit_dim_enum_val", column: "superbackFlatbackSpecial", name: "seal_plate_ibfk_2", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "seal_plate", "part", name: "seal_plate_ibfk_1"
+  add_foreign_key "spring", "crit_dim_enum_val", column: "material", name: "spring_ibfk_3", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "spring", "crit_dim_enum_val", column: "type", name: "spring_ibfk_2", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "spring", "part", name: "spring_ibfk_1"
   add_foreign_key "standard_bearing_spacer", "bearing_spacer", column: "oversized_part_id", primary_key: "part_id", name: "standard_bearing_spacer_ibfk_2"
   add_foreign_key "standard_bearing_spacer", "bearing_spacer", column: "standard_part_id", primary_key: "part_id", name: "standard_bearing_spacer_ibfk_1"
   add_foreign_key "standard_journal_bearing", "journal_bearing", column: "oversized_part_id", primary_key: "part_id", name: "standard_journal_bearing_ibfk_2"
   add_foreign_key "standard_journal_bearing", "journal_bearing", column: "standard_part_id", primary_key: "part_id", name: "standard_journal_bearing_ibfk_1"
   add_foreign_key "standard_oversize_part", "part", column: "oversize_part_id", name: "standard_oversize_part_oversized_part_id", on_delete: :cascade
   add_foreign_key "standard_oversize_part", "part", column: "standard_part_id", name: "standard_oversize_part_standard_part_id", on_delete: :cascade
+  add_foreign_key "thrust_bearing", "crit_dim_enum_val", column: "material", name: "thrust_bearing_ibfk_3", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "thrust_bearing", "crit_dim_enum_val", column: "rotation", name: "thrust_bearing_ibfk_2", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "thrust_bearing", "part", name: "thrust_bearing_ibfk_1"
+  add_foreign_key "thrust_collar", "crit_dim_enum_val", column: "material", name: "thrust_collar_ibfk_2", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "thrust_collar", "part", name: "thrust_collar_ibfk_1"
+  add_foreign_key "thrust_part", "part", name: "thrust_part_ibfk_1"
+  add_foreign_key "thrust_spacer", "crit_dim_enum_val", column: "material", name: "thrust_spacer_ibfk_2", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "thrust_spacer", "part", name: "thrust_spacer_ibfk_1"
+  add_foreign_key "thrust_washer", "crit_dim_enum_val", column: "material", name: "thrust_washer_ibfk_2", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "thrust_washer", "part", name: "thrust_washer_ibfk_1"
+  add_foreign_key "turbine_housing", "part", name: "turbine_housing_ibfk_1"
   add_foreign_key "turbine_wheel", "crit_dim_enum_val", column: "extendedTips", name: "turbine_wheel_ibfk_7", on_update: :cascade, on_delete: :nullify
   add_foreign_key "turbine_wheel", "crit_dim_enum_val", column: "journalType", name: "turbine_wheel_ibfk_6", on_update: :cascade, on_delete: :nullify
   add_foreign_key "turbine_wheel", "crit_dim_enum_val", column: "rotation", name: "turbine_wheel_ibfk_4", on_update: :cascade, on_delete: :nullify
@@ -1487,6 +1661,7 @@ ActiveRecord::Schema.define(version: 20160616111447) do
   add_foreign_key "turbine_wheel", "crit_dim_enum_val", column: "thread", name: "turbine_wheel_ibfk_2", on_update: :cascade, on_delete: :nullify
   add_foreign_key "turbine_wheel", "crit_dim_enum_val", column: "threadHand", name: "turbine_wheel_ibfk_3", on_update: :cascade, on_delete: :nullify
   add_foreign_key "turbine_wheel", "part", name: "turbine_wheel_ibfk_1"
+  add_foreign_key "turbo", "cool_type", name: "turbo_ibfk_2"
   add_foreign_key "turbo", "part", name: "turbo_ibfk_1"
   add_foreign_key "turbo", "turbo_model", name: "turbo_ibfk_3"
   add_foreign_key "turbo_car_model_engine_year", "car_model_engine_year", name: "turbo_car_model_engine_year_ibfk_1"
@@ -1496,4 +1671,8 @@ ActiveRecord::Schema.define(version: 20160616111447) do
   add_foreign_key "user", "auth_provider", name: "fk_authp", on_update: :cascade, on_delete: :nullify
   add_foreign_key "user_group", "groups", name: "user_group_ibfk_2"
   add_foreign_key "user_group", "user", name: "user_group_ibfk_1"
+  add_foreign_key "washer", "crit_dim_enum_val", column: "material", name: "washer_ibfk_3", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "washer", "crit_dim_enum_val", column: "platingCoating", name: "washer_ibfk_4", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "washer", "crit_dim_enum_val", column: "type", name: "washer_ibfk_2", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "washer", "part", name: "washer_ibfk_1"
 end
