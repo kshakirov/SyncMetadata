@@ -1,6 +1,6 @@
-require_relative '../app_helper'
-require_relative 'tools_helper'
-require_relative '../lib/sync'
+require_relative '../../app_helper'
+require_relative '../tools_helper'
+require_relative '../../lib/sync'
 
 products = ProductImage.all
 

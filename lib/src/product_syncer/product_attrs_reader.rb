@@ -1,15 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
 class ProductAttrsReader
 
   def initialize
