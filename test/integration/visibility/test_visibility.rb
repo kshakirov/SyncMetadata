@@ -27,7 +27,7 @@ class TestVisibility < Minitest::Unit::TestCase
     _test_scheleton 'Clamp'
     _test_scheleton 'Compressor Wheel'
     _test_scheleton 'Fitting'
-   # _test_scheleton 'Gasket'
+    _test_scheleton 'Gasket'
     _test_scheleton 'Heatshield'
     _test_scheleton 'Journal Bearing'
     _test_scheleton 'Journal Bearing Spacer'

@@ -17,3 +17,6 @@ Installation on new purged database
 2. to set tolerance attributes
 3. to set catalog visible attributes
 4. remove heatshiel_shroud recond in part_types
+
+
+5.check Clamp in part_type must be 'Clamp' not Part
