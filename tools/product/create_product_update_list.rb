@@ -1,4 +1,4 @@
-require_relative 'tools_helper'
+require_relative '../tools_helper'
 manager = ProductSyncManager.new
 crit_dim_classes_creator = CritDimClassesCreator.new
 crit_dim_classes_creator.dynamically_create_classes

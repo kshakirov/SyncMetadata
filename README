@@ -16,3 +16,4 @@ Installation on new purged database
 1. bundle exec rake db:migrate
 2. to set tolerance attributes
 3. to set catalog visible attributes
+4. remove heatshiel_shroud recond in part_types
