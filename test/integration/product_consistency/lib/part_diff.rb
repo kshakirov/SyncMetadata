@@ -11,7 +11,7 @@ class PartDiff
 
   def _get_mag_part sku
     mag_part = RestClient.get("#{@magento_host}/critical/index/regression",
-                              {:params => {:sku => 45068}})
+                              {:params => {:sku => sku}})
     JSON.parse(mag_part.body)
   end
 
