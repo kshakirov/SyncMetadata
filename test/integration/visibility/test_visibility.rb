@@ -3,7 +3,7 @@ require_relative 'test_helper'
 
 class TestVisibility < Minitest::Unit::TestCase
 
-    @@printer = DiffPrinter.new
+  @@printer = DiffPrinter.new
 
   def _test_scheleton part_type
     @diff_tool = VisibilityDiffTool.new
@@ -15,18 +15,14 @@ class TestVisibility < Minitest::Unit::TestCase
   end
 
   def _all
-    # _test_scheleton 'Bearing Housing'
-    #
     # _test_scheleton 'Bearing Spacer'
     #
-    # _test_scheleton 'Carbon Seal'
     # _test_scheleton 'Clamp'
     # _test_scheleton 'Compressor Wheel'
     # _test_scheleton 'Fitting'
     # _test_scheleton 'Gasket'
     # _test_scheleton 'Heatshield'
-    # _test_scheleton 'Journal Bearing'
-    # _test_scheleton 'Journal Bearing Spacer'
+    #
     # _test_scheleton 'Nozzle Ring'
     # _test_scheleton 'Nut'
     # _test_scheleton 'Pin'
@@ -36,7 +32,6 @@ class TestVisibility < Minitest::Unit::TestCase
     # _test_scheleton 'Thrust Bearing'
     # _test_scheleton 'Thrust Collar'
     # _test_scheleton 'Thrust Washer'
-    # _test_scheleton 'Turbine Wheel'
     # _test_scheleton 'Washer'
 
   end
@@ -60,6 +55,26 @@ class TestVisibility < Minitest::Unit::TestCase
     mags =_test_scheleton 'Turbine Wheel'
     assert_equal 3, mags.size
   end
+
+  def test_carbon_seal
+    mags =_test_scheleton 'Carbon Seal'
+    assert_equal 0, mags.size
+  end
+
+  def test_journal_bearing
+    mags =_test_scheleton 'Journal Bearing'
+    assert_equal 1, mags.size
+  end
+
+  def test_journal_bearing_spacer
+    mags =_test_scheleton 'Journal Bearing Spacer'
+    assert_equal 0, mags.size
+  end
+
+  # def test_cartridge
+  #   mags =_test_scheleton 'Cartridge'
+  #   assert_equal 0, mags.size
+  # end
 
 
 end
