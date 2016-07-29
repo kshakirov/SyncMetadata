@@ -1,4 +1,4 @@
-require_relative 'test_helper'
+require_relative '../test_helper'
 
 part_types = [['Backplate', 7832], ['Bearing Housing', 69],
               ['Bearing Spacer', 6613], ['Bolt Screw', 7838],

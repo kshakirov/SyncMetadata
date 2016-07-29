@@ -18,8 +18,8 @@ class VisibilityDiffTool
 
   end
 
-  def _find_missed_skus mag, meta
-    missed = []
+  def _find_missed_visible_skus mag, meta
+    missed_meta_skus = []
     mag.each do |mag_sku|
       found = false
       meta.each do |meta_sku|
@@ -29,15 +29,15 @@ class VisibilityDiffTool
         end
       end
       unless found
-        missed.push mag_sku
+        missed_meta_skus.push mag_sku
         found = false
       end
 
     end
-    missed
+    missed_meta_skus
   end
 
-  def _find_part_names skus
+  def _find_meta_missed_part_numbers skus
     names = []
     not_found = []
     skus.each do |sku|
@@ -52,7 +52,7 @@ class VisibilityDiffTool
     return names, not_found
   end
 
-  def find_mag_part_names skus
+  def _find_mag_missed_part_numbers skus
     results = []
     skus.each do |sku|
       results.push(@mag_client.get_by_sku(sku[0]))
@@ -60,11 +60,11 @@ class VisibilityDiffTool
     results
   end
 
-  def get_not_matched_skus part_type
+  def compare_by_part_skus part_type
     meta = get_meta_part part_type
     mag = get_mag_skus part_type
-    skus = _find_missed_skus(mag, meta)
-    return  _find_part_names(skus),  find_mag_part_names(skus)
+    missed_meta_skus = _find_missed_visible_skus(mag, meta)
+    return  _find_meta_missed_part_numbers(missed_meta_skus),  _find_mag_missed_part_numbers(missed_meta_skus)
 
   end
 
