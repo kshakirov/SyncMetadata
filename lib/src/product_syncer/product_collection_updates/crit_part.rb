@@ -15,7 +15,7 @@ module CollectionUpdate
     end
 
     def update_critical_products
-      counter_in, counter_out = 0
+      counter_in, counter_out = 0,0
       Part.find_each(batch_size: 100) do |p|
         begin
           if _has_crit_dim_attrs? p and _is_part_type_allowed? p

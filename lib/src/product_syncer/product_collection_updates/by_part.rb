@@ -29,8 +29,7 @@ module CollectionUpdate
     end
 
     def _collect_products_by_part_type part_type
-      counter_in = 0
-      counter_out =0
+      counter_in, counter_out = 0,0
       Part.find_each(batch_size: 100) do |p|
         begin
           if _is_needed_part_type(p, part_type) and is_active p

@@ -1,8 +1,8 @@
 module CollectionUpdate
 
-  class AllPart
+  class AllPart < Base
     def update_all
-      counter_in, counter_out = 0
+      counter_in, counter_out = 0,0
       Part.find_each(batch_size: 100) do |p|
         begin
           if is_active p
