@@ -9,72 +9,10 @@ class ProductSyncManager
     @external_systems = ExternalSystemsManagment.new
   end
 
-  def _has_crit_dim_attrs? id
-    @crit_dim_part_types.each do |p|
-      if p.part_type_id == id
-        return true
-      end
-
-    end
-    false
-  end
-
-  def _is_part_type_allowed? part_type_name
-    if part_type_name.downcase.include? 'part'
-      false
-    end
-    true
-  end
-
-
-  def _collect_critical_products
-    Part.find_each(batch_size: 100) do |p|
-      begin
-        if _has_crit_dim_attrs? p.part_type_id and _is_part_type_allowed? p.part_type.magento_attribute_set
-          puts 'id  =>' + p.id.to_s
-          YAML.dump @prod_attr_reader.run(p.id), @yaml_file
-        end
-      rescue Exception => e
-        puts e.message
-      end
-
-    end
-    @yaml_file.close
-  end
-
-
-  def _collect_products_by_part_type part_type
-    counter = 0
-    Part.find_each(batch_size: 100) do |p|
-      begin
-        if p.part_type.magento_attribute_set == part_type
-          puts 'id  =>' + p.id.to_s
-          YAML.dump @prod_attr_reader.run(p.id), @yaml_file
-          counter += 1
-        end
-      rescue Exception => e
-        counter -= 1
-        puts e.message
-      end
-
-    end
-    @yaml_file.close
-    counter
-  end
-
-
-
-  def update_all_products
-    _collect_critical_products
-  end
-
   def _get_part_audit_records last_id
     PartAudit.where("id > ?", last_id)
   end
 
-  def updata_products_by_part_type part_type
-    _collect_products_by_part_type part_type
-  end
 
   def update_products request
     updated_products = []
