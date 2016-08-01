@@ -34,6 +34,14 @@ class TestConsistency < Minitest::Unit::TestCase
     assert_equal(0, abscent.size, abscent.to_s)
 
   end
+  def test_one_carbon_seal
+    sku = 47808
+    part_diff = PartDiff.new 'storestaging.turbointernational.com'
+    matched, diff, abscent = part_diff.compare_critical sku
+    assert_equal(12, matched.size)
+    assert_equal(0, diff.size)
+    assert_equal(0, abscent.size, abscent.to_s)
+  end
 
 
 end

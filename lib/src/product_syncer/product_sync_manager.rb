@@ -22,7 +22,6 @@ class ProductSyncManager
     last_audit_id = 0
     audit_records.each do |record|
       update = @prod_attr_reader.run(record.part_id)
-      update['action'] = record.action
       updated_products.push(update)
       last_audit_id = record.id
     end

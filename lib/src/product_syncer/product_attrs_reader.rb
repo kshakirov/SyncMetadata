@@ -80,9 +80,14 @@ class ProductAttrsReader
     @price_attr_reader.get_attribute id
   end
 
+  def get_active_state part
+    part.inactive ? 'delete': 'update'
+  end
+
   def run id
     part = Part.find(id)
     inserted_product = {}
+    inserted_product['action'] = get_active_state part
     inserted_product['sku'] = part.id
     inserted_product['name'] = part.name
     inserted_product['manufacturer'] = part.manfr.name

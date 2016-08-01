@@ -214,7 +214,7 @@ from
 
      end
     }
-    File.open('var/metadata_visible.yml', 'w') {|f| f.write visible_ids_by_parts.to_yaml }
+    File.open('../var/metadata_visible.yml', 'w') {|f| f.write visible_ids_by_parts.to_yaml }
   end
 
 end
