@@ -71,7 +71,7 @@ class TestProductsAttrsReader < MiniTest::Unit::TestCase
   def test_apps
     @reader = ApplicationAttrReader.new
     attrs = @reader.get_attribute 6392
-    example = "Ford!!Various!!not specified!!6392!!||Ford!!7610!!not specified!!6392!!||Ford Tractor!!7610!!not specified!!6392!!||Ford!!7600!!not specified!!6392!!||Navistar!!Tractor!!not specified!!6392!!||Ford!!Tractor 7600,7700 Force II!!not specified!!6392!!"
+    example = "Ford!!Various!!not specified!!!!||Ford!!7610!!not specified!!4400!!||Ford!!Various!!not specified!!4.0L Altitude Compensation!!||Ford Tractor!!7610!!not specified!!268!!||Ford!!7600!!not specified!!!!||Navistar!!Tractor!!not specified!!DT239!!||Ford!!Tractor 7600,7700 Force II!!not specified!!256!!||Ford!!7600!!not specified!!4400!!"
     assert_equal example, attrs
   end
 

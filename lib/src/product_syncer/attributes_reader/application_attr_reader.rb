@@ -6,7 +6,9 @@ class ApplicationAttrReader
         q.part_id,
         cmake.name AS car_make,
         cyear.name AS car_year,
-        cmodel.name AS car_model
+        cmodel.name AS car_model,
+        cengine.engine_size,
+        cfuel.name as car_fuel
       from
         (
             select
@@ -37,12 +39,14 @@ class ApplicationAttrReader
         LEFT JOIN car_model cmodel ON cmodel.id = cmey.car_model_id
         LEFT JOIN car_make cmake ON cmake.id = cmodel.car_make_id
         LEFT JOIN car_year cyear ON cyear.id = cmey.car_year_id
+        LEFT JOIN car_engine cengine on cengine.id = cmey.car_engine_id
+        LEFT join car_fuel_type cfuel on cfuel.id = cengine.car_fuel_type_id
     }.gsub(/\s+/, " ").strip
   end
 
 
   def get_stringified_field app
-    "#{app[1]}!!#{app[3]}!!#{app[2]||'not specified'}!!#{app[0]}!!"
+    "#{app[1]}!!#{app[3]}!!#{app[2]||'not specified'}!!#{app[4]}!!#{app[5] || ''}"
 
   end
 
