@@ -43,25 +43,28 @@ class AttributeConfigurer
     end
   end
 
+  def get_tolerance tolerance
+    tolerance.nil? ? 0 : 1
+  end
+
 
   def process_row dimension
     part_type_name = dimension.part_type.magento_attribute_set
     options = {
         :attribute_set => part_type_name,
-        #:code => add_part_type_prefix(dimension.json_name, part_type_name),
         :code => dimension.idx_name,
         :options => {
             :label => dimension.name,
             :type => get_magento_type(dimension.data_type),
-            :tolerance => dimension.tolerance || 0,
+            :tolerance => get_tolerance(dimension.tolerance),
             :is_visible_in_list => dimension.is_visible_in_list || 0,
             :is_critical_dimension => dimension.is_critical_dimension || 1,
             :searchable => dimension.is_visible_in_list || 0,
             :filterable => dimension.is_visible_in_list || 0,
             :comparable => dimension.is_visible_in_list || 0,
             :is_filterable_in_search => dimension.is_visible_in_list || 0,
-            :scale => dimension.scale,
-            :length => dimension.length,
+            :scale => dimension.scale_web,
+            :length => dimension.length_web,
             :parent_id => get_parent_name_by_parent_id(dimension.parent_id),
             :unit => dimension.unit
         }
