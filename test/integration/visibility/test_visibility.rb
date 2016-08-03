@@ -20,8 +20,8 @@ class TestVisibility < Minitest::Unit::TestCase
     # _test_scheleton 'Clamp'
      _test_scheleton 'Compressor Wheel'
      _test_scheleton 'Fitting'
-     _test_scheleton 'Gasket'
-    # _test_scheleton 'Heatshield'
+
+    #
     #
      _test_scheleton 'Nozzle Ring'
      _test_scheleton 'Nut'
@@ -75,6 +75,21 @@ class TestVisibility < Minitest::Unit::TestCase
      mags =_test_scheleton 'Cartridge'
      assert_equal 0, mags.size
    end
+
+  def test_turbo
+    mags =_test_scheleton 'Turbo'
+    assert_equal 0, mags.size
+  end
+
+  def test_heatshield
+    mags = _test_scheleton 'Heatshield'
+    assert_equal 0, mags.size
+  end
+
+  def test_gasket
+    mags = _test_scheleton 'Gasket'
+    assert_equal 0, mags.size
+  end
 
 
 end

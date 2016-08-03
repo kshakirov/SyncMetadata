@@ -7,7 +7,7 @@ part_types = [['Backplate', 7832], ['Bearing Housing', 69],
 ['Journal Bearing Spacer', 7840],['Nozzle Ring', 72], ['Nut',7841], ['Pin', 7842],
 ['Piston Ring', 6615], ['Retaining Ring',7843 ], ['Seal Plate', 7844], ['Spring', 7845], ['Thrust Bearing', 7846],
 ['Thrust Collar', 7847], ['Thrust Washer', 7849], ['Turbine Wheel', 67], ['Washer', 7850],
-['Cartridge', 6609]]
+['Cartridge', 6609], ['Turbo', 6610]]
 
 catalog_getter = MagCatalogGetter.new
 

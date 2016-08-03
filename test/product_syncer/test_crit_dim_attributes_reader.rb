@@ -118,7 +118,10 @@ class TestProductsAttrsReader < MiniTest::Unit::TestCase
 
   def test_price
     @reader = PriceAttributeReader.new
-    p @reader.get_attribute 49542
+    prices =  @reader.get_attribute 49542
+    p prices
+    assert_equal 18.392, prices['prices']['E']
+    assert_equal 22.99, prices['standardPrice']
   end
 
 
