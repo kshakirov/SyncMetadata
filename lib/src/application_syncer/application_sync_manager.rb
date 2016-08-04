@@ -6,7 +6,7 @@ class ApplicationReader
 
     attrs['make'] = app.car_model.car_make.name if app.car_model and app.car_model.car_make
     attrs['model'] = app.car_model.name if app.car_model
-    attrs['year'] = app.car_year.name if app.car_year
+    attrs['year'] = app.car_year ? app.car_year.name : 'not specified'
     attrs['engineSize'] = app.car_engine.engine_size if app.car_engine
     attrs['fuelType'] = app.car_engine.car_fuel_type.name if app.car_engine and app.car_engine.car_fuel_type
     attrs['string'] = attrs['make'].to_s + '!!' + attrs['model'].to_s + '!!' + attrs['year'].to_s + '!!' +
