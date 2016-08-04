@@ -1,13 +1,33 @@
 class WhereUsedAttrReader
 
-  def  get_attribute id
+  def initialize
+    @keys_limit = 50
+  end
+
+  def limit_response_size response
+    if response.size > @keys_limit
+      limited_response = {}
+      i = 0
+      response.each_key do |key|
+        if i <@keys_limit
+          limited_response[key] = response[key]
+          i += 1
+        else
+          return limited_response
+        end
+      end
+    end
+    response
+  end
+
+  def get_attribute id
     vw = VWhereUsed.where(principal_id: id)
     response = {}
     if vw.size > 0
-      vw.each do  |v|
+      vw.each do |v|
         aggregate_turbo_part_numbers response, get_main_fields(v)
       end
-      response
+      limit_response_size response
     else
       nil
     end

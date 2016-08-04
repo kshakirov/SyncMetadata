@@ -22,6 +22,22 @@ class TestProductsAttrsReader < MiniTest::Unit::TestCase
     assert_equal 3,  attrs[62][:turboPartNumbers].size
     assert_equal "408105-0124",  attrs[62][:partNumber]
 
+    attrs = @reader.get_attribute 44652
+    assert_equal 3,  attrs[62][:turboPartNumbers].size
+    #assert_equal "408105-0124",  attrs[62][:partNumber]
+
+  end
+
+
+  def test_where_used_big
+    @reader = WhereUsedAttrReader.new
+    attrs = @reader.get_attribute 44652
+    assert_equal 150,  attrs.size
+    p attrs.size
+    json = attrs.to_json
+    n_attr = JSON.parse json
+    assert_equal 50,  attrs.size
+
   end
 
 
