@@ -11,7 +11,8 @@ class ProductAttrsReader
     @has_ti_interchange_attr_reader = HasTiInterchange.new
     @has_ti_chra_attr_reader = HasTiChra.new
     @part_type_analyzer = PartTypeAnalyzer.new
-    @turbo_type_model_attr_reader = TurboModelAttributeReader.new
+    @turbo_model_attr_reader = TurboModelAttributeReader.new
+    @turbo_type_attr_reader = TurboTypeAttributeReader.new
     @price_attr_reader = PriceAttributeReader.new
   end
 
@@ -69,11 +70,12 @@ class ProductAttrsReader
     end
   end
 
-  def get_turbo_and_model_type part_id, inserted_product
-    turbo_model, turbo_type = @turbo_type_model_attr_reader.get_attribute part_id
-    inserted_product['turbo_model'] = turbo_model
-    inserted_product['turbo_type'] = turbo_type
+  def get_turbo_type part_id
+    @turbo_type_attr_reader.get_attribute part_id
+  end
 
+  def get_turbo_model part_id
+    @turbo_model_attr_reader.get_attribute part_id
   end
 
   def get_price id
@@ -98,8 +100,9 @@ class ProductAttrsReader
     inserted_product['has_ti_chra'] = get_ti_chra part.id
     inserted_product['has_foreign_interchange'] = get_foreign_interchange part.id
     inserted_product['group_price'] = get_price part.id
+    inserted_product['turbo_model'] = get_turbo_model part.id
+    inserted_product['turbo_type'] = get_turbo_type part.id
 
-    get_turbo_and_model_type part.id, inserted_product
     add_part_type_specific_attrs inserted_product, 'where_used', get_where_used(part.id)
     add_part_type_specific_attrs inserted_product, 'service_kits', get_service_kits(part.id)
     add_part_type_specific_attrs inserted_product, 'interchanges', get_interchanges(part.id)

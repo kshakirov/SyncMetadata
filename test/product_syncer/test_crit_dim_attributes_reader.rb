@@ -109,20 +109,23 @@ class TestProductsAttrsReader < MiniTest::Unit::TestCase
 
 
 
-  def test_turbo_model_other
+  def test_turbo_model
     id = 42128
     @reader = TurboModelAttributeReader.new
-    models, types = @reader.get_attribute id
+    models = @reader.get_attribute id
     assert_equal 27, models.size
     assert_equal 1, models.select{|m | m =='RHB52W-52002P15NRBRL3911EZ'}.size
-    assert_equal "RHB5",  types[0]
 
-    models, types = @reader.get_attribute 25179
+    models = @reader.get_attribute 25179
     assert_equal 1, models.select{|m | m =='K27-3262MGB/20.22'}.size
-    assert_equal 'K27', types[0]
 
-    id = 42212
-    #assert_equal 1, models.select{|m | m =='GT1752'}.size
+  end
+
+  def test_turbo_type
+    id = 42128
+    @reader = TurboTypeAttributeReader.new
+    types = @reader.get_attribute id
+    assert_equal "RHB5", types[0]
 
   end
 

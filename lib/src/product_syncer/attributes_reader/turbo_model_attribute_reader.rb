@@ -41,14 +41,12 @@ class TurboModelAttributeReader
 
   def get_turbo_model responses
     models = Set.new
-    turbo_types = Set.new
     i = 0
     responses.each do |r|
       model = TurboModel.find r[1]
       models.add(model.name)
-      turbo_types.add(model.turbo_type.name)
     end
-    return models.to_a, turbo_types.to_a
+    models.to_a
   end
 
   def process_response id
