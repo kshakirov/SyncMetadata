@@ -66,7 +66,8 @@ class AttributeConfigurer
             :scale => dimension.scale_web,
             :length => dimension.length_web,
             :parent_id => get_parent_name_by_parent_id(dimension.parent_id),
-            :unit => dimension.unit
+            :unit => dimension.unit,
+            :seq_num => dimension.seq_num
         }
 
     }
