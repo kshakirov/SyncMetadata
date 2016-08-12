@@ -16,6 +16,7 @@ class CritDimClassesCreator
         klazz = Class.new(ActiveRecord::Base)
         klass = Object.const_set name, klazz
         klass.table_name = part_type.value
+        klass.inheritance_column = nil
         klass.primary_key = 'part_id'
       end
     end
